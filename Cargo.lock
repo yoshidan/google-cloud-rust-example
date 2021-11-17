@@ -379,6 +379,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "env_logger",
+ "google-cloud-gax",
  "google-cloud-googleapis",
  "google-cloud-spanner",
  "log",
