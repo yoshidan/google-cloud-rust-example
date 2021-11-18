@@ -49,15 +49,7 @@ services:
       - "8089:8089"
       - "5557:5557"
     environment:
-      LOCUST_MODE: master
-  loadtest-worker:
-    build:
-      context: scenario
-    links:
-      - loadtest
-    environment:
-      LOCUST_MASTER: loadtest
-      LOCUST_MODE: worker
+      LOCUST_MODE: standalone
   cli:
     image: sjdaws/spanner-cli:latest
     environment:

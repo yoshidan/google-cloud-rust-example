@@ -14,38 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-import uuid
-
-from datetime import datetime
 from locust import HttpUser, SequentialTaskSet, task, between, constant
 
 class UserBehavior(SequentialTaskSet):
-    token = ""
-    gameDay = ""
-    itemId = ""
+    user_id = ""
     def on_start(self):
-        response = self.client.post('/api/v1/auth/Register')
-        self.token = (response.json()["token"])
-        response2 = self.client.post(url='/api/v1/ranking/Add', headers={'x-auth-token': self.token})
+        response = self.client.get('/CreateUser')
+        self.user_id = response.text
+        print(self.user_id)
 
     @task(1)
-    def ranking_count(self):
-        response = self.client.post(
-            url='/api/v1/ranking/Count',
-            headers={'x-auth-token': self.token })
+    def read_inventory(self):
+        response = self.client.get(url='/ReadInventory/' + self.user_id)
 
     @task(1)
-    def ranking_near_me(self):
-        response = self.client.post(
-            url='/api/v1/ranking/NearMe',
-            headers={'x-auth-token': self.token})
-
-    @task(1)
-    def ranking_range(self):
-        response = self.client.post(
-            url='/api/v1/ranking/Range',
-            headers={'x-auth-token': self.token})
+    def update_inventory(self):
+        response = self.client.get(url='/UpdateInventory/' + self.user_id)
 
 class WebsiteUser(HttpUser):
     tasks = {UserBehavior:1}

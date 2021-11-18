@@ -9,7 +9,7 @@ use google_cloud_spanner::transaction::{ReadOptions};
 use google_cloud_spanner::row::{Error as RowError, TryFromStruct, Struct};
 use google_cloud_googleapis::Status;
 use google_cloud_spanner::transaction_ro::ReadOnlyTransaction;
-use google_cloud_spanner::client::TxError::{GRPC, SessionError};
+use google_cloud_spanner::client::TxError::{GRPC, InvalidSession};
 use prost_types::{Value, Timestamp};
 use google_cloud_spanner::value::CommitTimestamp;
 use chrono::{Utc, TimeZone, NaiveDateTime, DateTime};
@@ -29,7 +29,7 @@ enum Error {
     ParseError(#[from] RowError)
 }
 
-fn with_db(client: Arc<Client>) -> impl Filter<Extract = (Arc<Client>,), Error = Infallible> + Clone {
+fn with_client(client: Client) -> impl Filter<Extract = (Client,), Error = Infallible> + Clone {
     warp::any().map(move || client.clone())
 }
 
@@ -44,17 +44,17 @@ async fn main() {
     let mut sigint = signal(SignalKind::interrupt()).unwrap();
     let mut sigterm= signal(SignalKind::terminate()).unwrap();
 
-    let client = Arc::new(Client::new(database).await.unwrap());
+    let client = Client::new(database).await.unwrap();
 
     //define routes
     let read_inventory_handler= warp::path!("ReadInventory" / String)
-        .and(with_db(client.clone()))
+        .and( with_client(client.clone()))
         .and_then(move |user_id, cl| handler::read_inventory_handler(cl, user_id));
     let create_user_handler = warp::path!("CreateUser")
-        .and(with_db(client.clone()))
+        .and( with_client(client.clone()))
         .and_then(move |cl| handler::create_user_handler(cl));
     let update_inventory_handler = warp::path!("UpdateInventory" / String)
-        .and(with_db(client.clone()))
+        .and( with_client(client.clone()))
         .and_then(move |user_id, cl| handler::update_inventory_handler(cl, user_id));
     let routes = warp::get().and(read_inventory_handler.or(create_user_handler).or(update_inventory_handler));
 

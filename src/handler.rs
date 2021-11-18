@@ -42,7 +42,7 @@ impl TryAs<Status> for Error {
     }
 }
 
-pub async fn create_user_handler(client: Arc<Client>) -> Result<impl Reply, Rejection> {
+pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection> {
     let mut ms = vec![];
     let user_id =  Uuid::new_v4().to_string();
     let user = model::User {
@@ -78,14 +78,11 @@ pub async fn create_user_handler(client: Arc<Client>) -> Result<impl Reply, Reje
             ))
         },
         Err(e) => {
+            log::error!("error {:?}", e);
             Ok(warp::reply::with_status(
                 warp::reply::html(match e {
                     TxError::GRPC(e)  => e.to_string(),
-                    TxError::SessionError(e) => {
-                        log::error!("{:?}", e);
-                        "session error".to_string()
-                    }
-
+                    TxError::InvalidSession(e) => "session error".to_string()
                 }),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
             ))
@@ -93,9 +90,10 @@ pub async fn create_user_handler(client: Arc<Client>) -> Result<impl Reply, Reje
     }
 }
 
-pub async fn update_inventory_handler(client: Arc<Client>, user_id: String) -> Result<impl Reply, Rejection> {
+pub async fn update_inventory_handler(client: Client, user_id: String) -> Result<impl Reply, Rejection> {
     let tx_result = client.read_write_transaction(|mut tx| async {
         let result : Result<(), Error> = async {
+            //TODO key 指定が必要
             let mut reader = tx.read("UserItem", vec!["UserId", "ItemId", "Quantity"], Key::one(user_id.to_string())).await?;
             let ms  = loop {
                 let mut ms = vec![];
@@ -130,6 +128,7 @@ pub async fn update_inventory_handler(client: Arc<Client>, user_id: String) -> R
             ))
         },
         Err(e) => {
+            log::error!("error {:?}", e);
             Ok(warp::reply::with_status(
                 warp::reply::html( format!("error {:?}",e)),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
@@ -138,7 +137,7 @@ pub async fn update_inventory_handler(client: Arc<Client>, user_id: String) -> R
     }
 }
 
-pub async fn read_inventory_handler(client: Arc<Client>, user_id: String) -> Result<impl Reply, Rejection> {
+pub async fn read_inventory_handler(client: Client, user_id: String) -> Result<impl Reply, Rejection> {
     let mut tx = match client.single().await {
         Ok(tx) => tx,
         Err(e) => {
@@ -157,6 +156,7 @@ pub async fn read_inventory_handler(client: Arc<Client>, user_id: String) -> Res
             ))
         },
         Err(e) => {
+            log::error!("error {:?}", e);
             Ok(warp::reply::with_status(
                 warp::reply::html( format!("error {:?}",e)),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
