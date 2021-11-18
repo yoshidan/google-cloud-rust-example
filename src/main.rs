@@ -16,6 +16,7 @@ use chrono::{Utc, TimeZone, NaiveDateTime, DateTime};
 use uuid::Uuid;
 use std::convert::Infallible;
 use google_cloud_spanner::key::Key;
+use tokio::signal::unix::{signal, SignalKind};
 
 mod model;
 mod handler;
@@ -39,6 +40,9 @@ async fn main() {
 
     env_logger::init();
     log::info!("Start server.");
+
+    let mut sigint = signal(SignalKind::interrupt()).unwrap();
+    let mut sigterm= signal(SignalKind::terminate()).unwrap();
 
     let client = Arc::new(Client::new(database).await.unwrap());
 
@@ -66,7 +70,10 @@ async fn main() {
     tokio::spawn(server);
 
     // wait for signal
-    tokio::signal::ctrl_c().await;
+    tokio::select! {
+        _ = sigint.recv() => println!("SIGINT"),
+        _ = sigterm.recv() => println!("SIGTERM"),
+    };
     let _ = tx.send(());
     client.close().await;
     log::info!("All the spanner sessions are deleted.");
