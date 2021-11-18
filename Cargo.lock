@@ -325,7 +325,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#d08f98f55e53f9b6b9fce018ff32abddcadf1cb1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#72a378deb7ec7bde8d84ac45ca71f136e62306d9"
 dependencies = [
  "async-trait",
  "chrono",
@@ -344,7 +344,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#d08f98f55e53f9b6b9fce018ff32abddcadf1cb1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#72a378deb7ec7bde8d84ac45ca71f136e62306d9"
 dependencies = [
  "google-cloud-googleapis",
  "log",
@@ -355,7 +355,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#d08f98f55e53f9b6b9fce018ff32abddcadf1cb1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#72a378deb7ec7bde8d84ac45ca71f136e62306d9"
 dependencies = [
  "prost 0.8.0",
  "prost-types 0.8.0",
@@ -366,7 +366,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#d08f98f55e53f9b6b9fce018ff32abddcadf1cb1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#72a378deb7ec7bde8d84ac45ca71f136e62306d9"
 dependencies = [
  "hyper",
  "thiserror",
@@ -395,7 +395,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#d08f98f55e53f9b6b9fce018ff32abddcadf1cb1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#72a378deb7ec7bde8d84ac45ca71f136e62306d9"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
@@ -524,9 +524,9 @@ checksum = "acd94fdbe1d4ff688b67b04eee2e17bd50995534a61539e45adfefb45e5e5503"
 
 [[package]]
 name = "httpdate"
-version = "1.0.1"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6456b8a6c8f33fee7d958fcd1b60d55b11940a79e63ae87013e6d22e26034440"
+checksum = "c4a1e36c821dbe04574f602848a19f742f4fb3c98d40449f11bcad18d6b17421"
 
 [[package]]
 name = "humantime"
@@ -1286,9 +1286,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.70"
+version = "1.0.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e277c495ac6cd1a01a58d0a0c574568b4d1ddf14f59965c6a58b8d96400b54f3"
+checksum = "063bf466a64011ac24040a49009724ee60a57da1b437617ceb32e53ad61bfb19"
 dependencies = [
  "itoa",
  "ryu",

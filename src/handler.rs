@@ -9,7 +9,6 @@ use google_cloud_spanner::transaction::{ReadOptions, Transaction};
 use google_cloud_spanner::row::{Error as RowError, TryFromStruct, Struct};
 use google_cloud_googleapis::Status;
 use google_cloud_spanner::transaction_ro::ReadOnlyTransaction;
-use google_cloud_spanner::client::TxError::{GRPC, SessionError};
 use prost_types::{Value, Timestamp};
 use google_cloud_spanner::value::CommitTimestamp;
 use chrono::{Utc, TimeZone, NaiveDateTime, DateTime};
@@ -18,31 +17,28 @@ use std::convert::Infallible;
 use google_cloud_spanner::key::{Key, KeySet};
 use crate::model;
 use std::ops::DerefMut;
-use google_cloud_gax::invoke::AsGrpcStatus;
+use google_cloud_gax::invoke::TryAs;
 use crate::model::UserItem;
+use google_cloud_spanner::sessions::SessionError;
 
 #[derive(thiserror::Error, Debug)]
 enum Error {
+    #[error("no data found user_id = {0}")]
+    NoDataFound(String),
     #[error(transparent)]
     ParseError(#[from] RowError),
-    #[error("no data found user_id = {0}")]
-    NoDataFound(String ),
     #[error(transparent)]
-    TxError(#[from] TxError),
+    GRPC(#[from] Status),
+    #[error(transparent)]
+    SessionError(#[from] SessionError),
 }
 
-impl AsGrpcStatus for Error {
-    fn as_status(&self) -> Option<&Status> {
+impl TryAs<Status> for Error {
+    fn try_as(&self) -> Result<&Status,()> {
         match self {
-            Error::TxError(TxError::GRPC(s)) => Some(s),
-            _ => None
+            Error::GRPC(s) => Ok(s),
+            _ => Err(())
         }
-    }
-}
-
-impl From<Status> for Error {
-    fn from(s: Status) -> Self {
-        return Error::TxError(TxError::GRPC(s));
     }
 }
 
@@ -135,11 +131,7 @@ pub async fn update_inventory_handler(client: Arc<Client>, user_id: String) -> R
         },
         Err(e) => {
             Ok(warp::reply::with_status(
-                warp::reply::html( match e {
-                    Error::TxError(e)  => e.to_string(),
-                    Error::ParseError(e) => e.to_string(),
-                    Error::NoDataFound(e) => e.to_string(),
-                }),
+                warp::reply::html( format!("error {:?}",e)),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
             ))
         }
@@ -166,11 +158,7 @@ pub async fn read_inventory_handler(client: Arc<Client>, user_id: String) -> Res
         },
         Err(e) => {
             Ok(warp::reply::with_status(
-                warp::reply::html( match e {
-                    Error::TxError(e)  => e.to_string(),
-                    Error::ParseError(e) => e.to_string(),
-                    Error::NoDataFound(e) => e.to_string(),
-                }),
+                warp::reply::html( format!("error {:?}",e)),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
             ))
         }
@@ -184,17 +172,14 @@ async fn read(user_id:String, mut tx: &mut Transaction) -> Result<(String,usize,
             FROM User \
             WHERE UserId = @Param1");
     stmt.add_param("Param1", user_id.to_string());
-    let mut reader = tx.query(stmt).await.map_err(|e| Error::TxError(TxError::GRPC(e)))?;
-    let row = match reader.next().await.map_err(|e| Error::TxError(TxError::GRPC(e)))?{
+    let mut reader = tx.query(stmt).await?;
+    let row = match reader.next().await?{
         Some(row) => row,
         None => return Err(Error::NoDataFound(user_id))
     };
-    let user_id= row.column_by_name::<String>("UserId")
-        .map_err(Error::ParseError)?;
-    let user_items= row.column_by_name::<Vec<model::UserItem>>("UserItem")
-        .map_err(Error::ParseError)?;
-    let user_characters = row.column_by_name::<Vec<model::UserCharacter>>("UserCharacter")
-        .map_err(Error::ParseError)?;
+    let user_id= row.column_by_name::<String>("UserId")?;
+    let user_items= row.column_by_name::<Vec<model::UserItem>>("UserItem")?;
+    let user_characters = row.column_by_name::<Vec<model::UserCharacter>>("UserCharacter")?;
     Ok((
         user_id,
         user_items.len(),
