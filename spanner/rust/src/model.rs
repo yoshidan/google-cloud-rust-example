@@ -1,13 +1,13 @@
-use google_cloud_spanner::value::CommitTimestamp;
 use chrono::{DateTime, Utc};
-use google_cloud_spanner::statement::{ToStruct, Kinds, ToKind, Types};
-use google_cloud_spanner::row::{TryFromStruct, Struct, Error as RowError};
+use google_cloud_spanner::row::{Error as RowError, Struct, TryFromStruct};
+use google_cloud_spanner::statement::{Kinds, ToKind, ToStruct, Types};
+use google_cloud_spanner::value::CommitTimestamp;
 
 /// User
 pub struct User {
     pub user_id: String,
     pub premium: bool,
-    pub updated_at: DateTime<Utc>
+    pub updated_at: DateTime<Utc>,
 }
 
 impl ToStruct for User {
@@ -15,7 +15,7 @@ impl ToStruct for User {
         vec![
             ("UserId", self.user_id.to_kind()),
             ("Premium", self.premium.to_kind()),
-            ("UpdatedAt", CommitTimestamp::new().to_kind())
+            ("UpdatedAt", CommitTimestamp::new().to_kind()),
         ]
     }
 
@@ -23,7 +23,7 @@ impl ToStruct for User {
         vec![
             ("UserId", String::get_type()),
             ("Premium", bool::get_type()),
-            ("UpdatedAt", CommitTimestamp::get_type())
+            ("UpdatedAt", CommitTimestamp::get_type()),
         ]
     }
 }
@@ -43,7 +43,7 @@ pub struct UserItem {
     pub user_id: String,
     pub item_id: i64,
     pub quantity: i64,
-    pub updated_at: DateTime<Utc>
+    pub updated_at: DateTime<Utc>,
 }
 
 impl ToStruct for UserItem {
@@ -52,7 +52,7 @@ impl ToStruct for UserItem {
             ("UserId", self.user_id.to_kind()),
             ("ItemId", self.item_id.to_kind()),
             ("Quantity", self.quantity.to_kind()),
-            ("UpdatedAt", CommitTimestamp::new().to_kind())
+            ("UpdatedAt", CommitTimestamp::new().to_kind()),
         ]
     }
 
@@ -61,7 +61,7 @@ impl ToStruct for UserItem {
             ("UserId", String::get_type()),
             ("ItemId", i64::get_type()),
             ("Quantity", i64::get_type()),
-            ("UpdatedAt", CommitTimestamp::get_type())
+            ("UpdatedAt", CommitTimestamp::get_type()),
         ]
     }
 }
@@ -77,14 +77,13 @@ impl TryFromStruct for UserItem {
     }
 }
 
-
 /// UserCharacter
 pub struct UserCharacter {
     pub user_id: String,
     pub character_id: i64,
     pub level: i64,
     pub acquired_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>
+    pub updated_at: DateTime<Utc>,
 }
 
 impl ToStruct for UserCharacter {
@@ -93,8 +92,8 @@ impl ToStruct for UserCharacter {
             ("UserId", self.user_id.to_kind()),
             ("CharacterId", self.character_id.to_kind()),
             ("Level", self.level.to_kind()),
-            ("AcquiredAt",self.acquired_at.to_kind()),
-            ("UpdatedAt", CommitTimestamp::new().to_kind())
+            ("AcquiredAt", self.acquired_at.to_kind()),
+            ("UpdatedAt", CommitTimestamp::new().to_kind()),
         ]
     }
 
@@ -103,8 +102,8 @@ impl ToStruct for UserCharacter {
             ("UserId", String::get_type()),
             ("CharacterId", i64::get_type()),
             ("Level", i64::get_type()),
-            ("AcquiredAt",DateTime::<Utc>::get_type()),
-            ("UpdatedAt", CommitTimestamp::get_type())
+            ("AcquiredAt", DateTime::<Utc>::get_type()),
+            ("UpdatedAt", CommitTimestamp::get_type()),
         ]
     }
 }

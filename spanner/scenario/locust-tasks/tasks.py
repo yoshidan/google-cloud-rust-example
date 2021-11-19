@@ -19,17 +19,17 @@ from locust import HttpUser, SequentialTaskSet, task, between, constant
 class UserBehavior(SequentialTaskSet):
     user_id = ""
     def on_start(self):
-        response = self.client.get('/CreateUser')
+        response = self.client.post('/CreateUser')
         self.user_id = response.text
         print(self.user_id)
 
     @task(1)
     def read_inventory(self):
-        response = self.client.get(url='/ReadInventory/' + self.user_id)
+        response = self.client.post(url='/ReadOnly', data={'user_id': self.user_id })
 
     @task(1)
     def update_inventory(self):
-        response = self.client.get(url='/UpdateInventory/' + self.user_id)
+        response = self.client.post(url='/ReadWrite', data={'user_id': self.user_id })
 
 class WebsiteUser(HttpUser):
     tasks = {UserBehavior:1}

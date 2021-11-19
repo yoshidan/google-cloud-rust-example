@@ -29,9 +29,9 @@ services:
       SPANNER_PROJECT_ID: local-project
       SPANNER_INSTANCE_ID: test-instance
       SPANNER_EMULATOR_HOST: spanner:9010
-  api:
+  api-rust:
     build:
-      context: .
+      context: rust
       args:
         - GITHUB_TOKEN=$GITHUB_TOKEN
     ports:
