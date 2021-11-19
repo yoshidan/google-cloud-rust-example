@@ -325,7 +325,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#efecfa8d09ab32b56e8f9a58f64c7361904d3860"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#f4f5673251cb73fa3b5b348cde85038f92a701c9"
 dependencies = [
  "async-trait",
  "chrono",
@@ -344,7 +344,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#efecfa8d09ab32b56e8f9a58f64c7361904d3860"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#f4f5673251cb73fa3b5b348cde85038f92a701c9"
 dependencies = [
  "google-cloud-googleapis",
  "log",
@@ -355,7 +355,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#efecfa8d09ab32b56e8f9a58f64c7361904d3860"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#f4f5673251cb73fa3b5b348cde85038f92a701c9"
 dependencies = [
  "prost 0.8.0",
  "prost-types 0.8.0",
@@ -366,7 +366,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#efecfa8d09ab32b56e8f9a58f64c7361904d3860"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#f4f5673251cb73fa3b5b348cde85038f92a701c9"
 dependencies = [
  "hyper",
  "thiserror",
@@ -395,7 +395,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#efecfa8d09ab32b56e8f9a58f64c7361904d3860"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#f4f5673251cb73fa3b5b348cde85038f92a701c9"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
@@ -1624,9 +1624,9 @@ dependencies = [
 
 [[package]]
 name = "tower"
-version = "0.4.10"
+version = "0.4.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c00e500fff5fa1131c866b246041a6bf96da9c965f8fe4128cb1421f23e93c00"
+checksum = "5651b5f6860a99bd1adb59dbfe1db8beb433e73709d9032b413a77e2fb7c066a"
 dependencies = [
  "futures-core",
  "futures-util",
