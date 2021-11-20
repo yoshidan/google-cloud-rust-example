@@ -1,0 +1,50 @@
+# Source: api/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rust-api
+  labels:
+    app.kubernetes.io/name: rust-api
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rust-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rust-api
+        app.kubernetes.io/instance: rust-api
+    spec:
+      containers:
+        - name: rust-api
+          securityContext:
+            {}
+          image: "asia.gcr.io/<your_project>/rust-api:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3031
+              protocol: TCP0
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 1000Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rust-api
+  labels:
+    app: rust-api
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3031
+      targetPort: 3031
+      protocol: TCP
+      name: rust-api
+  selector:
+    app: rust-api

@@ -1,0 +1,81 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: locust-master
+  labels:
+    name: locust-master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: locust-master
+  template:
+    metadata:
+      labels:
+        app: locust-master
+    spec:
+      containers:
+        - name: locust-master
+          image: asia.gcr.io/<your_project>/spanner-loadtest:latest
+          imagePullPolicy: Always
+          env:
+            - name: LOCUST_MODE
+              value: master
+          ports:
+            - name: loc-master-web
+              containerPort: 8089
+              protocol: TCP
+            - name: loc-master-p1
+              containerPort: 5557
+              protocol: TCP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: locust-master
+  labels:
+    app: locust-master
+spec:
+  ports:
+    - port: 8089
+      targetPort: loc-master-web
+      protocol: TCP
+      name: loc-master-web
+    - port: 5557
+      targetPort: loc-master-p1
+      protocol: TCP
+      name: loc-master-p1
+  selector:
+    app: locust-master
+  type: LoadBalancer
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: locust-worker
+  labels:
+    name: locust-worker
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: locust-worker
+  template:
+    metadata:
+      labels:
+        app: locust-worker
+    spec:
+      containers:
+        - name: locust-worker
+          image: asia.gcr.io/<your_project>/spanner-loadtest:latest
+          imagePullPolicy: Always
+          env:
+            - name: LOCUST_MODE
+              value: worker
+            - name: LOCUST_MASTER
+              value: locust-master
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 2Gi
+
