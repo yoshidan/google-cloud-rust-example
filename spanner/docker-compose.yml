@@ -29,7 +29,7 @@ services:
       SPANNER_PROJECT_ID: local-project
       SPANNER_INSTANCE_ID: test-instance
       SPANNER_EMULATOR_HOST: spanner:9010
-  api-rust:
+  rust-api:
     build:
       context: rust
       args:
