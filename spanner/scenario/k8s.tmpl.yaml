@@ -28,6 +28,10 @@ spec:
             - name: loc-master-p1
               containerPort: 5557
               protocol: TCP
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
 ---
 kind: Service
 apiVersion: v1
