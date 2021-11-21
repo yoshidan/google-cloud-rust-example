@@ -57,8 +57,8 @@ docker build -t asia.gcr.io/${YOUR_PROJECT}/loadtest:latest .
 docker push asia.gcr.io/${YOUR_PROJECT}/loadtest:latest
 
 cd ..
-sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-loadteset.tmpl.yaml > k8s-loadtest.yaml
+sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-loadtest.tmpl.yaml > k8s-loadtest.gen.yaml
 kubectl apply -f k8s-loadtest.yaml
-sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-rust.tmpl.yaml > k8s-rust.yaml
+sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-rust.tmpl.yaml > k8s-rust.gen.yaml
 kubectl apply -f k8s-rust.yaml
 ```

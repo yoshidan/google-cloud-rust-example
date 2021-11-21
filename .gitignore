@@ -1,2 +1,2 @@
 /target
-k8s.yaml
+*.gen.yaml

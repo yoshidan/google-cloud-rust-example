@@ -32,6 +32,9 @@ spec:
             requests:
               cpu: 1000m
               memory: 2Gi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
 ---
 kind: Service
 apiVersion: v1
@@ -83,4 +86,6 @@ spec:
             requests:
               cpu: 1000m
               memory: 2Gi
-
+            limits:
+              cpu: 1000m
+              memory: 2Gi

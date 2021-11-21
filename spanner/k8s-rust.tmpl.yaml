@@ -29,13 +29,16 @@ spec:
             - name: SPANNER_DSN
               value: projects/<your_project>/instances/test-instance/databases/local-database
             - name: RUST_LOG
-              value: debug
+              value: info
           ports:
             - name: http
               containerPort: 3031
               protocol: TCP
           resources:
             requests:
+              cpu: 2000m
+              memory: 2Gi
+            limits:
               cpu: 2000m
               memory: 2Gi
 ---
