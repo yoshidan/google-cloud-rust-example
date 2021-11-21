@@ -91,7 +91,6 @@ pub async fn update_inventory_handler(
     let tx_result = client
         .read_write_transaction(|mut tx| async {
             let result: Result<(), Error> = async {
-                //TODO key 指定が必要
                 let mut stmt = Statement::new("SELECT * From UserItem WHERE UserId = @UserId");
                 stmt.add_param("UserId", user_id.to_string());
                 let mut reader = tx.query(stmt).await?;
