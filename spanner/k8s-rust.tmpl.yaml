@@ -18,6 +18,7 @@ spec:
         app.kubernetes.io/name: rust-api
         app.kubernetes.io/instance: rust-api
     spec:
+      serviceAccountName: example
       containers:
         - name: rust-api
           securityContext:
@@ -27,6 +28,8 @@ spec:
           env:
             - name: SPANNER_DSN
               value: projects/<your_project>/instances/test-instance/databases/local-database
+            - name: RUST_LOG
+              value: debug
           ports:
             - name: http
               containerPort: 3031

@@ -325,7 +325,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#9edbabe0bec0b74f7abac5739a44b2e5aa4b264f"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#3c9609f0bca6ff5282c37b376143a79b3db1d84d"
 dependencies = [
  "async-trait",
  "chrono",
@@ -334,6 +334,7 @@ dependencies = [
  "hyper",
  "hyper-tls",
  "jsonwebtoken",
+ "log",
  "serde",
  "serde_json",
  "thiserror",
@@ -344,7 +345,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#9edbabe0bec0b74f7abac5739a44b2e5aa4b264f"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#3c9609f0bca6ff5282c37b376143a79b3db1d84d"
 dependencies = [
  "google-cloud-googleapis",
  "log",
@@ -355,7 +356,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#9edbabe0bec0b74f7abac5739a44b2e5aa4b264f"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#3c9609f0bca6ff5282c37b376143a79b3db1d84d"
 dependencies = [
  "prost 0.8.0",
  "prost-types 0.8.0",
@@ -366,7 +367,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#9edbabe0bec0b74f7abac5739a44b2e5aa4b264f"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#3c9609f0bca6ff5282c37b376143a79b3db1d84d"
 dependencies = [
  "hyper",
  "thiserror",
@@ -395,7 +396,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#9edbabe0bec0b74f7abac5739a44b2e5aa4b264f"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/doc2#3c9609f0bca6ff5282c37b376143a79b3db1d84d"
 dependencies = [
  "async-trait",
  "base64 0.13.0",

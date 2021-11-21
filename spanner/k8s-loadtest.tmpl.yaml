@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: locust-master
-          image: asia.gcr.io/<your_project>/spanner-loadtest:latest
+          image: asia.gcr.io/<your_project>/loadtest:latest
           imagePullPolicy: Always
           env:
             - name: LOCUST_MODE
@@ -69,9 +69,10 @@ spec:
       labels:
         app: locust-worker
     spec:
+      serviceAccountName: example
       containers:
         - name: locust-worker
-          image: asia.gcr.io/<your_project>/spanner-loadtest:latest
+          image: asia.gcr.io/<your_project>/loadtest:latest
           imagePullPolicy: Always
           env:
             - name: LOCUST_MODE

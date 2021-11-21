@@ -16,19 +16,36 @@ curl -X POST localhost:3031/CreateUser
 
 ## Run on GKE
 
-### Setup your GCP project 
+### Create Spanner Database
 * [Create spanner database](https://console.cloud.google.com/spanner) and create tables these [schema.sql](./ddl/schema.sql)
-* Create [GKE](https://cloud.google.com/kubernetes-engine?hl=ja) cluster.
 
-### Deploy to GKE
+### Create GKE Autopilot Cluster
 ```
-# change <your_project> to your GCP project id
+export GOOGLE_APPLICATION_CREDENTIALS=<your_credentials_json_path>
 export YOUR_PROJECT=<your_project>
-export YOUR_CLUSTER=<your_cluster>
+export YOUR_ACCOUNT=<your_account>
+export YOUR_CLUSTER=example
 
-gcloud container clusters get-credentials $YOUR_CLUSTER --region asia-northeast1 --project ${YOUR_PROJECT}
+# activate service account which have permission to use spanner and gke (owner is easy to setup).
+gcloud auth activate-service-account ${YOUR_ACCOUNT}@${YOUR_PROJECT}.iam.gserviceaccount.com --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+
+# create GKE Autopilot cluster
+gcloud container clusters create-auto $YOUR_CLUSTER --region asia-northeast1 --project=$YOUR_PROJECT
+
+gcloud container clusters get-credentials $YOUR_CLUSTER --region asia-northeast1 --project $YOUR_PROJECT
 gcloud config set container/cluster $YOUR_CLUSTER
 
+# enable workload identity
+kubectl create serviceaccount --namespace default example
+gcloud iam service-accounts add-iam-policy-binding ${YOUR_ACCOUNT}@${YOUR_PROJECT}.iam.gserviceaccount.com \
+    --role roles/iam.workloadIdentityUser \
+    --member "serviceAccount:${YOUR_PROJECT}.svc.id.goog[default/example]"
+kubectl annotate serviceaccount --namespace default example \
+    iam.gke.io/gcp-service-account=${YOUR_ACCOUNT}@${YOUR_PROJECT}.iam.gserviceaccount.com 
+``` 
+
+### Deploy k8s
+```
 cd rust
 docker build -t asia.gcr.io/${YOUR_PROJECT}/rust-api:latest .
 docker push asia.gcr.io/${YOUR_PROJECT}/rust-api:latest
@@ -38,5 +55,10 @@ kubectl apply -f k8s.yaml
 cd scenario
 docker build -t asia.gcr.io/${YOUR_PROJECT}/loadtest:latest .
 docker push asia.gcr.io/${YOUR_PROJECT}/loadtest:latest
-sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s.tmpl.yaml > k8s.yaml
-kubectl apply -f k8s.yaml
+
+cd ..
+sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-loadteset.tmpl.yaml > k8s-loadtest.yaml
+kubectl apply -f k8s-loadtest.yaml
+sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-rust.tmpl.yaml > k8s-rust.yaml
+kubectl apply -f k8s-rust.yaml
+```
