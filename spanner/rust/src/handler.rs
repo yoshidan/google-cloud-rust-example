@@ -1,25 +1,21 @@
 use crate::model;
-use crate::model::UserItem;
-use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
+
+use chrono::Utc;
 use google_cloud_gax::invoke::TryAs;
 use google_cloud_googleapis::Status;
-use google_cloud_spanner::client::{Client, ClientConfig, TxError};
-use google_cloud_spanner::key::{Key, KeySet};
+use google_cloud_spanner::client::{Client, TxError};
+
 use google_cloud_spanner::mutation::{insert_struct, update};
-use google_cloud_spanner::reader::{AsyncIterator, RowIterator, StatementReader};
-use google_cloud_spanner::row::{Error as RowError, Struct, TryFromStruct};
+use google_cloud_spanner::reader::AsyncIterator;
+use google_cloud_spanner::row::Error as RowError;
 use google_cloud_spanner::sessions::SessionError;
-use google_cloud_spanner::statement::{Kinds, Statement, ToKind, ToStruct, Types};
-use google_cloud_spanner::transaction::{ReadOptions, Transaction};
-use google_cloud_spanner::transaction_ro::ReadOnlyTransaction;
-use google_cloud_spanner::value::CommitTimestamp;
-use prost_types::{Timestamp, Value};
-use std::collections::BTreeMap;
-use std::convert::Infallible;
+use google_cloud_spanner::statement::{Statement, ToKind};
+use google_cloud_spanner::transaction::Transaction;
+
 use std::ops::DerefMut;
-use std::sync::Arc;
+
 use uuid::Uuid;
-use warp::{Filter, Rejection, Reply};
+use warp::{Rejection, Reply};
 
 #[derive(thiserror::Error, Debug)]
 enum Error {
@@ -80,7 +76,7 @@ pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection
             Ok(warp::reply::with_status(
                 warp::reply::html(match e {
                     TxError::GRPC(e) => e.to_string(),
-                    TxError::InvalidSession(e) => "session error".to_string(),
+                    TxError::InvalidSession(_e) => "session error".to_string(),
                 }),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
             ))
@@ -154,7 +150,7 @@ pub async fn read_inventory_handler(
 ) -> Result<impl Reply, Rejection> {
     let mut tx = match client.single().await {
         Ok(tx) => tx,
-        Err(e) => {
+        Err(_e) => {
             let error_message = "aaa".to_string();
             return Ok(warp::reply::with_status(
                 warp::reply::html(error_message),
@@ -180,7 +176,7 @@ pub async fn read_inventory_handler(
     }
 }
 
-async fn read(user_id: String, mut tx: &mut Transaction) -> Result<(String, usize, usize), Error> {
+async fn read(user_id: String, tx: &mut Transaction) -> Result<(String, usize, usize), Error> {
     let mut stmt = Statement::new("SELECT * , \
             ARRAY (SELECT AS STRUCT * FROM UserItem WHERE UserId = @Param1 ) AS UserItem, \
             ARRAY (SELECT AS STRUCT * FROM UserCharacter WHERE UserId = @Param1 ) AS UserCharacter  \

@@ -1,22 +1,15 @@
-use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 use google_cloud_googleapis::Status;
-use google_cloud_spanner::client::TxError::{InvalidSession, GRPC};
-use google_cloud_spanner::client::{Client, ClientConfig, TxError};
-use google_cloud_spanner::key::Key;
-use google_cloud_spanner::mutation::{insert_or_update, insert_or_update_struct};
-use google_cloud_spanner::reader::{AsyncIterator, RowIterator, StatementReader};
-use google_cloud_spanner::row::{Error as RowError, Struct, TryFromStruct};
-use google_cloud_spanner::statement::{Kinds, Statement, ToKind, ToStruct, Types};
-use google_cloud_spanner::transaction::ReadOptions;
-use google_cloud_spanner::transaction_ro::ReadOnlyTransaction;
-use google_cloud_spanner::value::CommitTimestamp;
-use prost_types::{Timestamp, Value};
-use std::collections::{BTreeMap, HashMap};
+
+use google_cloud_spanner::client::Client;
+
+use google_cloud_spanner::row::Error as RowError;
+
+use std::collections::HashMap;
 use std::convert::Infallible;
-use std::sync::Arc;
+
 use tokio::signal::unix::{signal, SignalKind};
-use uuid::Uuid;
-use warp::{Filter, Rejection, Reply};
+
+use warp::Filter;
 
 mod handler;
 mod model;
@@ -46,17 +39,21 @@ async fn main() {
     let client = Client::new(database).await.unwrap();
 
     //define routes
-    let read_inventory_handler = warp::path!("ReadOnly" )
+    let read_inventory_handler = warp::path!("ReadOnly")
         .and(warp::body::form())
         .and(with_client(client.clone()))
-        .and_then(move |param: HashMap<String,String>, cl| handler::read_inventory_handler(cl, param.get("user_id").unwrap().to_string()));
+        .and_then(move |param: HashMap<String, String>, cl| {
+            handler::read_inventory_handler(cl, param.get("user_id").unwrap().to_string())
+        });
     let create_user_handler = warp::path!("CreateUser")
         .and(with_client(client.clone()))
         .and_then(move |cl| handler::create_user_handler(cl));
-    let update_inventory_handler = warp::path!("ReadWrite" )
+    let update_inventory_handler = warp::path!("ReadWrite")
         .and(warp::body::form())
         .and(with_client(client.clone()))
-        .and_then(move |param: HashMap<String,String>, cl| handler::update_inventory_handler(cl, param.get("user_id").unwrap().to_string()));
+        .and_then(move |param: HashMap<String, String>, cl| {
+            handler::update_inventory_handler(cl, param.get("user_id").unwrap().to_string())
+        });
     let routes = warp::post().and(
         read_inventory_handler
             .or(create_user_handler)
