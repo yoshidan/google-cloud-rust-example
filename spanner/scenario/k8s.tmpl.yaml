@@ -29,9 +29,9 @@ spec:
               containerPort: 5557
               protocol: TCP
           resources:
-            limits:
+            requests:
               cpu: 1000m
-              memory: 1000Mi
+              memory: 2Gi
 ---
 kind: Service
 apiVersion: v1
@@ -60,7 +60,7 @@ metadata:
   labels:
     name: locust-worker
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
       app: locust-worker

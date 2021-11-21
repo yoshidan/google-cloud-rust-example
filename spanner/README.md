@@ -23,7 +23,11 @@ curl -X POST localhost:3031/CreateUser
 ### Deploy to GKE
 ```
 # change <your_project> to your GCP project id
-YOUR_PROJECT=<your_project>
+export YOUR_PROJECT=<your_project>
+export YOUR_CLUSTER=<your_cluster>
+
+gcloud container clusters get-credentials $YOUR_CLUSTER --region asia-northeast1 --project ${YOUR_PROJECT}
+gcloud config set container/cluster $YOUR_CLUSTER
 
 cd rust
 docker build -t asia.gcr.io/${YOUR_PROJECT}/rust-api:latest .
