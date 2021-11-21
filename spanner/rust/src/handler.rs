@@ -8,7 +8,7 @@ use google_cloud_spanner::client::{Client, TxError};
 use google_cloud_spanner::mutation::{insert_struct, update};
 use google_cloud_spanner::reader::AsyncIterator;
 use google_cloud_spanner::row::Error as RowError;
-use google_cloud_spanner::sessions::SessionError;
+use google_cloud_spanner::session::SessionError;
 use google_cloud_spanner::statement::{Statement, ToKind};
 use google_cloud_spanner::transaction::Transaction;
 

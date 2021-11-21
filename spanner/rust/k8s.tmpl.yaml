@@ -29,9 +29,9 @@ spec:
               containerPort: 3031
               protocol: TCP0
           resources:
-            requests:
-              cpu: 1000m
-              memory: 1000Mi
+            limits:
+              cpu: 2000m
+              memory: 2000Mi
 ---
 apiVersion: v1
 kind: Service
