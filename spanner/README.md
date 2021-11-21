@@ -49,8 +49,6 @@ kubectl annotate serviceaccount --namespace default example \
 cd rust
 docker build -t asia.gcr.io/${YOUR_PROJECT}/rust-api:latest .
 docker push asia.gcr.io/${YOUR_PROJECT}/rust-api:latest
-sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s.tmpl.yaml > k8s.yaml
-kubectl apply -f k8s.yaml
 
 cd scenario
 docker build -t asia.gcr.io/${YOUR_PROJECT}/loadtest:latest .
@@ -58,7 +56,9 @@ docker push asia.gcr.io/${YOUR_PROJECT}/loadtest:latest
 
 cd ..
 sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-loadtest.tmpl.yaml > k8s-loadtest.gen.yaml
-kubectl apply -f k8s-loadtest.yaml
+kubectl apply -f k8s-loadtest.gen.yaml
 sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-rust.tmpl.yaml > k8s-rust.gen.yaml
-kubectl apply -f k8s-rust.yaml
+kubectl apply -f k8s-rust.gen.yaml
 ```
+
+Then `kubectl get services` shows EXTERNAL-IP of locust-master.
