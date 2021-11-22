@@ -27,6 +27,8 @@ func main() {
 	defer client.Close()
 
 	router.Post("/CreateUser", internal.CreateUser(client))
+	router.Post("/ReadOnly", internal.ReadInventory(client))
+	router.Post("/ReadWrite", internal.UpdateInventory(client))
 	server := http.Server{Addr: ":3032", Handler: router}
 	go func() {
 		sigint := make(chan os.Signal, 1)
@@ -34,7 +36,7 @@ func main() {
 		signal.Notify(sigint, syscall.SIGTERM)
 		<-sigint
 		fmt.Println("Shutdown server.")
-		_ = server.Shutdown(context.Background());
+		_ = server.Shutdown(context.Background())
 	}()
 
 	fmt.Println("Listening on http://0.0.0.0:3032")

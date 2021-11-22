@@ -2,6 +2,7 @@ package internal
 
 import (
 	"cloud.google.com/go/spanner"
+	"context"
 	"fmt"
 	"github.com/google/uuid"
 	"net/http"
@@ -67,5 +68,83 @@ func CreateUser(client *spanner.Client) http.HandlerFunc {
 		}
 		writer.WriteHeader(http.StatusOK)
 		_, _ = writer.Write([]byte(userIDString))
+	}
+}
+
+func ReadInventory(client *spanner.Client) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		userID := request.FormValue("user_id")
+		stmt := spanner.NewStatement(`SELECT * ,
+			ARRAY (SELECT AS STRUCT * FROM UserItem WHERE UserId = @Param1 ) AS UserItem, 
+			ARRAY (SELECT AS STRUCT * FROM UserCharacter WHERE UserId = @Param1 ) AS UserCharacter  
+			FROM User 
+			WHERE UserId = @Param1
+		`)
+		stmt.Params["Param1"] = userID
+		tx := client.Single()
+		iter := tx.Query(request.Context(), stmt)
+		defer iter.Stop()
+		row, err := iter.Next()
+		if err != nil {
+			errorResponse(writer,err)
+			return
+		}
+		var userId string
+		if err = row.ColumnByName("UserId", &userId); err != nil {
+			errorResponse(writer,err)
+			return
+		}
+		var userItems []*UserItem
+		if err = row.ColumnByName("UserItem", &userItems); err != nil {
+			errorResponse(writer,err)
+			return
+		}
+
+		var userCharacters []*UserCharacter
+		if err = row.ColumnByName("UserCharacter", &userCharacters); err != nil {
+			errorResponse(writer,err)
+			return
+		}
+		writer.WriteHeader(http.StatusOK)
+		_, _ = writer.Write([]byte(fmt.Sprintf("user=%d, item=%d, character=%d", userId, len(userItems), len(userCharacters))))
+	}
+}
+
+func UpdateInventory(client *spanner.Client) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		userID := request.FormValue("user_id")
+
+		cts, err := client.ReadWriteTransaction(request.Context(), func(ctx context.Context, transaction *spanner.ReadWriteTransaction) error {
+			stmt := spanner.NewStatement("SELECT * From UserItem WHERE UserId = @UserId")
+			stmt.Params["UserId"] = userID
+			iter := transaction.Query(ctx, stmt)
+			ms := make([]*spanner.Mutation,0)
+			for {
+				row ,err := iter.Next()
+				if err != nil {
+					break
+				}
+				var itemId int64
+				if err = row.ColumnByName("ItemId", &itemId); err != nil {
+					return err
+				}
+				var quantity int64
+				if err = row.ColumnByName("Quantity", &quantity); err != nil {
+					return err
+				}
+				ms = append(ms, spanner.Update("UserItem", []string{"UserId", "ItemId", "Quantity"}, []interface{}{userID, itemId, quantity}))
+			}
+			if err := transaction.BufferWrite(ms); err != nil {
+				return err
+			}
+			return nil
+		})
+
+		if err != nil {
+			errorResponse(writer,err)
+			return
+		}
+		writer.WriteHeader(http.StatusOK)
+		_, _ = writer.Write([]byte(fmt.Sprintf("ts=%d", cts.Second())))
 	}
 }
