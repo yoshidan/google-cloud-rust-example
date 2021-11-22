@@ -18,6 +18,8 @@ curl -X POST localhost:3031/CreateUser
 
 ### Create Spanner Database
 * [Create spanner database](https://console.cloud.google.com/spanner) and create tables these [schema.sql](./ddl/schema.sql)
+ - instance name should be `test-instance` 
+ - database name should be `local-database`
 
 ### Create GKE Autopilot Cluster
 ```
@@ -46,6 +48,10 @@ kubectl annotate serviceaccount --namespace default example \
 
 ### Deploy k8s
 ```
+cd go
+docker build -t asia.gcr.io/${YOUR_PROJECT}/go-api:latest .
+docker push asia.gcr.io/${YOUR_PROJECT}/go-api:latest
+
 cd rust
 docker build -t asia.gcr.io/${YOUR_PROJECT}/rust-api:latest .
 docker push asia.gcr.io/${YOUR_PROJECT}/rust-api:latest
@@ -59,6 +65,8 @@ sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-loadtest.tmpl.yaml > k8s-loadtest
 kubectl apply -f k8s-loadtest.gen.yaml
 sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-rust.tmpl.yaml > k8s-rust.gen.yaml
 kubectl apply -f k8s-rust.gen.yaml
+sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-go.tmpl.yaml > k8s-go.gen.yaml
+kubectl apply -f k8s-go.gen.yaml
 ```
 
 Then `kubectl get services` shows EXTERNAL-IP of locust-master.

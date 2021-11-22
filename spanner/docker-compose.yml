@@ -42,6 +42,16 @@ services:
       RUST_LOG: info
       SPANNER_EMULATOR_HOST: spanner:9010
       SPANNER_DSN: projects/local-project/instances/test-instance/databases/local-database
+  go-api:
+    build:
+      context: go
+    ports:
+      - "3032:3032"
+    links:
+      - spanner
+    environment:
+      SPANNER_EMULATOR_HOST: spanner:9010
+      SPANNER_DSN: projects/local-project/instances/test-instance/databases/local-database
   loadtest:
     build:
       context: scenario
