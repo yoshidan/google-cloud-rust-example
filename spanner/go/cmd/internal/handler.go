@@ -132,7 +132,7 @@ func UpdateInventory(client *spanner.Client) http.HandlerFunc {
 				if err = row.ColumnByName("Quantity", &quantity); err != nil {
 					return err
 				}
-				ms = append(ms, spanner.Update("UserItem", []string{"UserId", "ItemId", "Quantity"}, []interface{}{userID, itemId, quantity}))
+				ms = append(ms, spanner.Update("UserItem", []string{"UserId", "ItemId", "Quantity"}, []interface{}{userID, itemId, quantity + 1}))
 			}
 			if err := transaction.BufferWrite(ms); err != nil {
 				return err
