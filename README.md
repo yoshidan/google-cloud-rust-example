@@ -1,7 +1,4 @@
 # google-cloud-rust-example
 
-## Cloud Run
-
-```
-docker
-```
+Example code for [google-cloud-rust](https://github.com/yoshidan/google-cloud-rust)
+* [google-cloud-spanner-example](./tree/main/spanner)
