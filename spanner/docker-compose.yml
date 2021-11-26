@@ -32,8 +32,6 @@ services:
   rust-api:
     build:
       context: rust
-      args:
-        - GITHUB_TOKEN=$GITHUB_TOKEN
     ports:
       - "3031:3031"
     links:

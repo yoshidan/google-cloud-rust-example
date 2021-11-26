@@ -18,8 +18,7 @@ curl -X POST localhost:3031/CreateUser
 
 ### Create Spanner Database
 * [Create spanner database](https://console.cloud.google.com/spanner) and create tables these [schema.sql](./ddl/schema.sql)
- - instance name should be `test-instance` 
- - database name should be `local-database`
+  - [test database name](https://github.com/yoshidan/google-cloud-rust-example/blob/main/spanner/k8s-rust.tmpl.yaml#L29 )
 
 ### Create GKE Autopilot Cluster
 ```
