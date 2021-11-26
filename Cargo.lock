@@ -320,7 +320,8 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#b4c46812522a40c6acdeddfd8839e84396c6dd7a"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a4885f1b3ef76ae878bd7bcdd47bdcd44b4297e20837ce28d3464c1904d8fc32"
 dependencies = [
  "async-trait",
  "chrono",
@@ -340,7 +341,8 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#b4c46812522a40c6acdeddfd8839e84396c6dd7a"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "473483d3898e0e2f7d0a102af704b4ca0f6e76bd2fc927eae5dbb2220021ea3a"
 dependencies = [
  "google-cloud-googleapis",
  "log",
@@ -351,7 +353,8 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#b4c46812522a40c6acdeddfd8839e84396c6dd7a"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "871b7b325d18ecf91bee7770e88a81610655612542b47e20bc0ccfac8562767d"
 dependencies = [
  "prost",
  "prost-types",
@@ -362,7 +365,8 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#b4c46812522a40c6acdeddfd8839e84396c6dd7a"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d8c4d6acfba3b6cb136c3a12d943a9d728098d2066137e7fbc1078526b129b1a"
 dependencies = [
  "hyper",
  "thiserror",
@@ -384,6 +388,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "tonic",
+ "tonic-web",
  "uuid",
  "warp",
 ]
@@ -391,7 +396,8 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#b4c46812522a40c6acdeddfd8839e84396c6dd7a"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7af4715038a4c5d14fedc0fab9856aaea7a57b21dda571d79958d842afcd93b9"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
@@ -1542,6 +1548,24 @@ dependencies = [
  "prost-build",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "tonic-web"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c5802af338d3f01590a5c0777783f0e0897df05e9b053ac0084e310a9319a456"
+dependencies = [
+ "base64 0.13.0",
+ "bytes",
+ "futures-core",
+ "http",
+ "http-body",
+ "hyper",
+ "pin-project",
+ "tonic",
+ "tower-service",
+ "tracing",
 ]
 
 [[package]]
