@@ -13,9 +13,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.48"
+version = "1.0.49"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62e1f47f7dc0422027a4e370dd4548d4d66b26782e513e98dca1e689e058a80e"
+checksum = "0a03e93e97a28fbc9f42fbc5ba0886a3c67eb637b476dbee711f80a6ffe8223d"
 
 [[package]]
 name = "arrayvec"
@@ -319,9 +319,8 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-auth"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4885f1b3ef76ae878bd7bcdd47bdcd44b4297e20837ce28d3464c1904d8fc32"
+version = "0.1.1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
 dependencies = [
  "async-trait",
  "chrono",
@@ -340,21 +339,20 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-gax"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "473483d3898e0e2f7d0a102af704b4ca0f6e76bd2fc927eae5dbb2220021ea3a"
+version = "0.2.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
 dependencies = [
  "google-cloud-googleapis",
  "log",
  "rand",
  "tokio",
+ "tonic",
 ]
 
 [[package]]
 name = "google-cloud-googleapis"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "871b7b325d18ecf91bee7770e88a81610655612542b47e20bc0ccfac8562767d"
+version = "0.2.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
 dependencies = [
  "prost",
  "prost-types",
@@ -363,10 +361,36 @@ dependencies = [
 ]
 
 [[package]]
-name = "google-cloud-metadata"
+name = "google-cloud-grpc"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8c4d6acfba3b6cb136c3a12d943a9d728098d2066137e7fbc1078526b129b1a"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
+dependencies = [
+ "google-cloud-auth",
+ "prost",
+ "prost-types",
+ "thiserror",
+ "tonic",
+]
+
+[[package]]
+name = "google-cloud-longrunning"
+version = "0.1.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
+dependencies = [
+ "google-cloud-gax",
+ "google-cloud-googleapis",
+ "google-cloud-grpc",
+ "log",
+ "prost",
+ "prost-types",
+ "tokio",
+ "tonic",
+]
+
+[[package]]
+name = "google-cloud-metadata"
+version = "0.1.1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
 dependencies = [
  "hyper",
  "thiserror",
@@ -395,9 +419,8 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-spanner"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7af4715038a4c5d14fedc0fab9856aaea7a57b21dda571d79958d842afcd93b9"
+version = "0.2.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
@@ -407,6 +430,8 @@ dependencies = [
  "google-cloud-auth",
  "google-cloud-gax",
  "google-cloud-googleapis",
+ "google-cloud-grpc",
+ "google-cloud-longrunning",
  "hyper",
  "hyper-tls",
  "log",

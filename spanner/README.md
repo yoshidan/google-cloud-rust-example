@@ -47,6 +47,9 @@ kubectl annotate serviceaccount --namespace default example \
 
 ### Deploy k8s
 ```
+gcloud container clusters get-credentials $YOUR_CLUSTER --region asia-northeast1 --project $YOUR_PROJECT
+gcloud config set container/cluster $YOUR_CLUSTER
+
 cd go
 docker build -t asia.gcr.io/${YOUR_PROJECT}/go-api:latest .
 docker push asia.gcr.io/${YOUR_PROJECT}/go-api:latest
