@@ -13,9 +13,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.49"
+version = "1.0.51"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a03e93e97a28fbc9f42fbc5ba0886a3c67eb637b476dbee711f80a6ffe8223d"
+checksum = "8b26702f315f53b6071259e15dd9d64528213b44d61de1ec926eca7715d62203"
 
 [[package]]
 name = "arrayvec"
@@ -259,17 +259,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "629316e42fe7c2a0b9a65b47d159ceaa5453ab14e8f0a3c5eedbb8cd55b4a445"
 
 [[package]]
-name = "futures-macro"
-version = "0.3.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a89f17b21645bc4ed773c69af9c9a0effd4a3f1a3876eadd453469f8854e7fdd"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "futures-sink"
 version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -288,7 +277,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "41d22213122356472061ac0f1ab2cee28d2bac8491410fd68c2af53d1cedb83e"
 dependencies = [
  "futures-core",
- "futures-macro",
  "futures-sink",
  "futures-task",
  "pin-project-lite",
@@ -320,7 +308,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.1.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
 dependencies = [
  "async-trait",
  "chrono",
@@ -340,7 +328,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
 dependencies = [
  "google-cloud-googleapis",
  "log",
@@ -352,7 +340,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
 dependencies = [
  "prost",
  "prost-types",
@@ -362,20 +350,22 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-grpc"
-version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
+version = "0.2.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
 dependencies = [
  "google-cloud-auth",
+ "http",
  "prost",
  "prost-types",
  "thiserror",
  "tonic",
+ "tower",
 ]
 
 [[package]]
 name = "google-cloud-longrunning"
-version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
+version = "0.2.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
 dependencies = [
  "google-cloud-gax",
  "google-cloud-googleapis",
@@ -390,7 +380,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.1.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
 dependencies = [
  "hyper",
  "thiserror",
@@ -401,6 +391,7 @@ dependencies = [
 name = "google-cloud-rust-example-spanner"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "chrono",
  "env_logger",
  "google-cloud-gax",
@@ -419,21 +410,18 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-spanner"
-version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#67154055c6f68621cdd1f0f6257eeb74b8361ec7"
+version = "0.3.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
 dependencies = [
+ "anyhow",
  "async-trait",
  "base64 0.13.0",
  "chrono",
- "futures-channel",
- "futures-util",
  "google-cloud-auth",
  "google-cloud-gax",
  "google-cloud-googleapis",
  "google-cloud-grpc",
  "google-cloud-longrunning",
- "hyper",
- "hyper-tls",
  "log",
  "parking_lot",
  "prost",
@@ -1159,9 +1147,9 @@ dependencies = [
 
 [[package]]
 name = "rust_decimal"
-version = "1.17.0"
+version = "1.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "353775f96a1f400edcca737f843cb201af3645912e741e64456a257c770173e8"
+checksum = "71b5a9625a7e6060b23db692facf49082cc78889a7e6ac94a735356ae49db4b0"
 dependencies = [
  "arrayvec",
  "num-traits",
@@ -1183,9 +1171,9 @@ dependencies = [
 
 [[package]]
 name = "ryu"
-version = "1.0.5"
+version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
+checksum = "3c9613b5a66ab9ba26415184cfc41156594925a9cf3a2057e57f31ff145f6568"
 
 [[package]]
 name = "safemem"
