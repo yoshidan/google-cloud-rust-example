@@ -308,7 +308,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.1.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#a0034e02e9acfeeb8c8bad6a8a29defcd7c60a7e"
 dependencies = [
  "async-trait",
  "chrono",
@@ -328,7 +328,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#a0034e02e9acfeeb8c8bad6a8a29defcd7c60a7e"
 dependencies = [
  "google-cloud-googleapis",
  "log",
@@ -340,7 +340,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#a0034e02e9acfeeb8c8bad6a8a29defcd7c60a7e"
 dependencies = [
  "prost",
  "prost-types",
@@ -351,7 +351,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-grpc"
 version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#a0034e02e9acfeeb8c8bad6a8a29defcd7c60a7e"
 dependencies = [
  "google-cloud-auth",
  "http",
@@ -365,7 +365,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-longrunning"
 version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#a0034e02e9acfeeb8c8bad6a8a29defcd7c60a7e"
 dependencies = [
  "google-cloud-gax",
  "google-cloud-googleapis",
@@ -380,7 +380,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.1.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#a0034e02e9acfeeb8c8bad6a8a29defcd7c60a7e"
 dependencies = [
  "hyper",
  "thiserror",
@@ -411,13 +411,12 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner"
 version = "0.3.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ae02396cb617c5b8ca007770201a3f3fe9f6431a"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#a0034e02e9acfeeb8c8bad6a8a29defcd7c60a7e"
 dependencies = [
  "anyhow",
  "async-trait",
  "base64 0.13.0",
  "chrono",
- "google-cloud-auth",
  "google-cloud-gax",
  "google-cloud-googleapis",
  "google-cloud-grpc",

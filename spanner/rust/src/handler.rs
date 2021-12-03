@@ -81,7 +81,7 @@ pub async fn update_inventory_handler(
                 while let Some(row) = reader.next().await? {
                     let item_id = row.column_by_name::<i64>("ItemId")?;
                     let quantity = row.column_by_name::<i64>("Quantity")? + 1;
-                    ms.push(update_map("User_Item", &[(&"UserId", &user_id), (&"ItemId", &item_id), (&"Quantity", &quantity)]));
+                    ms.push(update_map("UserItem", &[(&"UserId", &user_id), (&"ItemId", &item_id), (&"Quantity", &quantity)]));
                 }
                 tx.buffer_write(ms);
                 Ok(())
