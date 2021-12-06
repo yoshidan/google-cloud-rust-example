@@ -72,14 +72,12 @@ pub async fn update_inventory_handler(
         .read_write_transaction(|tx| {
             let user_id = user_id.clone();
             Box::pin(async move {
-                let mut stmt = Statement::new("SELECT * From UserItem WHERE UserId = @UserId");
-                stmt.add_param("UserId", &user_id);
-                let mut reader = tx.query(stmt).await?;
+                let mut items =
+                    model::user_item::UserItem::read_by_user_id(tx.deref_mut(), &user_id).await?;
                 let mut ms = vec![];
-                while let Some(row) = reader.next().await? {
-                    let mut user_item = model::user_item::UserItem::try_from(row)?;
-                    user_item.quantity += 1;
-                    ms.push(user_item.update());
+                for mut item in items.into_iter() {
+                    item.quantity += 1;
+                    ms.push(item.update());
                 }
                 tx.buffer_write(ms);
                 Ok(())
