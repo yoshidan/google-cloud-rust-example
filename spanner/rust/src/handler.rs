@@ -1,24 +1,21 @@
 use crate::model;
 
 use chrono::Utc;
-use google_cloud_gax::invoke::TryAs;
-use google_cloud_googleapis::Status;
-use google_cloud_spanner::client::{Client, TxError, RunInTxError};
 
-use google_cloud_spanner::mutation::{insert_struct, update, update_map};
+use google_cloud_spanner::client::{Client, RunInTxError, TxError};
+
 use google_cloud_spanner::reader::AsyncIterator;
-use google_cloud_spanner::row::Error as RowError;
-use google_cloud_spanner::session::SessionError;
-use google_cloud_spanner::statement::{Statement, ToKind};
+
+use google_cloud_spanner::statement::Statement;
 use google_cloud_spanner::transaction::Transaction;
 
 use std::ops::DerefMut;
 
 use uuid::Uuid;
 use warp::{Rejection, Reply};
-use tonic::codegen::Body;
+
 use google_cloud_spanner::value::Timestamp;
-use tonic::Code;
+
 use std::convert::TryFrom;
 
 pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection> {
@@ -71,7 +68,7 @@ pub async fn update_inventory_handler(
     client: Client,
     user_id: String,
 ) -> Result<impl Reply, Rejection> {
-    let tx_result :Result<(Option<Timestamp>, ()), RunInTxError> = client
+    let tx_result: Result<(Option<Timestamp>, ()), RunInTxError> = client
         .read_write_transaction(|tx| {
             let user_id = user_id.clone();
             Box::pin(async move {
@@ -143,7 +140,10 @@ pub async fn read_inventory_handler(
     }
 }
 
-async fn read(user_id: String, tx: &mut Transaction) -> Result<(String, usize, usize), RunInTxError> {
+async fn read(
+    user_id: String,
+    tx: &mut Transaction,
+) -> Result<(String, usize, usize), RunInTxError> {
     let mut stmt = Statement::new("SELECT * , \
             ARRAY (SELECT AS STRUCT * FROM UserItem WHERE UserId = @Param1 ) AS UserItem, \
             ARRAY (SELECT AS STRUCT * FROM UserCharacter WHERE UserId = @Param1 ) AS UserCharacter  \
@@ -153,10 +153,16 @@ async fn read(user_id: String, tx: &mut Transaction) -> Result<(String, usize, u
     let mut reader = tx.query(stmt).await?;
     let row = match reader.next().await? {
         Some(row) => row,
-        None => return Err(RunInTxError::Any(anyhow::Error::new(tonic::Status::new(tonic::Code::NotFound, "no row found")))),
+        None => {
+            return Err(RunInTxError::Any(anyhow::Error::new(tonic::Status::new(
+                tonic::Code::NotFound,
+                "no row found",
+            ))))
+        }
     };
     let user_id = row.column_by_name::<String>("UserId")?;
     let user_items = row.column_by_name::<Vec<model::user_item::UserItem>>("UserItem")?;
-    let user_characters = row.column_by_name::<Vec<model::user_character::UserCharacter>>("UserCharacter")?;
+    let user_characters =
+        row.column_by_name::<Vec<model::user_character::UserCharacter>>("UserCharacter")?;
     Ok((user_id, user_items.len(), user_characters.len()))
 }

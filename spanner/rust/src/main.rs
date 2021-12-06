@@ -1,8 +1,4 @@
-use google_cloud_googleapis::Status;
-
 use google_cloud_spanner::client::Client;
-
-use google_cloud_spanner::row::Error as RowError;
 
 use std::collections::HashMap;
 use std::convert::Infallible;
