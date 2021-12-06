@@ -3,9 +3,9 @@ use crate::model;
 use chrono::Utc;
 use google_cloud_gax::invoke::TryAs;
 use google_cloud_googleapis::Status;
-use google_cloud_spanner::client::{Client, TxError};
+use google_cloud_spanner::client::{Client, TxError, RunInTxError};
 
-use google_cloud_spanner::mutation::{insert_struct, update};
+use google_cloud_spanner::mutation::{insert_struct, update, update_map};
 use google_cloud_spanner::reader::AsyncIterator;
 use google_cloud_spanner::row::Error as RowError;
 use google_cloud_spanner::session::SessionError;
@@ -16,54 +16,37 @@ use std::ops::DerefMut;
 
 use uuid::Uuid;
 use warp::{Rejection, Reply};
-
-#[derive(thiserror::Error, Debug)]
-enum Error {
-    #[error("no data found user_id = {0}")]
-    NoDataFound(String),
-    #[error(transparent)]
-    ParseError(#[from] RowError),
-    #[error(transparent)]
-    GRPC(#[from] Status),
-    #[error(transparent)]
-    SessionError(#[from] SessionError),
-}
-
-impl TryAs<Status> for Error {
-    fn try_as(&self) -> Result<&Status, ()> {
-        match self {
-            Error::GRPC(s) => Ok(s),
-            _ => Err(()),
-        }
-    }
-}
+use tonic::codegen::Body;
+use google_cloud_spanner::value::Timestamp;
+use tonic::Code;
+use std::convert::TryFrom;
 
 pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection> {
     let mut ms = vec![];
     let user_id = Uuid::new_v4().to_string();
-    let user = model::User {
+    let user = model::user::User {
         user_id: user_id.to_string(),
         premium: true,
         updated_at: Utc::now(),
     };
-    ms.push(insert_struct("User", user));
+    ms.push(user.insert());
     for i in 0..10 {
-        let user_item = model::UserItem {
+        let user_item = model::user_item::UserItem {
             user_id: user_id.to_string(),
             item_id: i,
             quantity: 0,
             updated_at: Utc::now(),
         };
-        ms.push(insert_struct("UserItem", user_item));
+        ms.push(user_item.insert());
 
-        let user_character = model::UserCharacter {
+        let user_character = model::user_character::UserCharacter {
             user_id: user_id.to_string(),
             character_id: i,
             level: 1,
             acquired_at: Utc::now(),
             updated_at: Utc::now(),
         };
-        ms.push(insert_struct("UserCharacter", user_character));
+        ms.push(user_character.insert());
     }
 
     match client.apply(ms).await {
@@ -88,37 +71,22 @@ pub async fn update_inventory_handler(
     client: Client,
     user_id: String,
 ) -> Result<impl Reply, Rejection> {
-    let tx_result = client
-        .read_write_transaction(|mut tx| async {
-            let result: Result<(), Error> = async {
+    let tx_result :Result<(Option<Timestamp>, ()), RunInTxError> = client
+        .read_write_transaction(|tx| {
+            let user_id = user_id.clone();
+            Box::pin(async move {
                 let mut stmt = Statement::new("SELECT * From UserItem WHERE UserId = @UserId");
-                stmt.add_param("UserId", user_id.to_string());
+                stmt.add_param("UserId", &user_id);
                 let mut reader = tx.query(stmt).await?;
                 let mut ms = vec![];
-                loop {
-                    let row = reader.next().await?;
-                    match row {
-                        Some(row) => {
-                            let item_id = row.column_by_name::<i64>("ItemId")?;
-                            let quantity = row.column_by_name::<i64>("Quantity")?;
-                            ms.push(update(
-                                "UserItem",
-                                vec!["UserId", "ItemId", "Quantity"],
-                                vec![
-                                    user_id.to_string().to_kind(),
-                                    item_id.to_kind(),
-                                    (quantity + 1).to_kind(),
-                                ],
-                            ));
-                        }
-                        None => break,
-                    }
+                while let Some(row) = reader.next().await? {
+                    let mut user_item = model::user_item::UserItem::try_from(row)?;
+                    user_item.quantity += 1;
+                    ms.push(user_item.update());
                 }
                 tx.buffer_write(ms);
                 Ok(())
-            }
-            .await;
-            (tx, result)
+            })
         })
         .await;
 
@@ -175,20 +143,20 @@ pub async fn read_inventory_handler(
     }
 }
 
-async fn read(user_id: String, tx: &mut Transaction) -> Result<(String, usize, usize), Error> {
+async fn read(user_id: String, tx: &mut Transaction) -> Result<(String, usize, usize), RunInTxError> {
     let mut stmt = Statement::new("SELECT * , \
             ARRAY (SELECT AS STRUCT * FROM UserItem WHERE UserId = @Param1 ) AS UserItem, \
             ARRAY (SELECT AS STRUCT * FROM UserCharacter WHERE UserId = @Param1 ) AS UserCharacter  \
             FROM User \
             WHERE UserId = @Param1");
-    stmt.add_param("Param1", user_id.to_string());
+    stmt.add_param("Param1", &user_id);
     let mut reader = tx.query(stmt).await?;
     let row = match reader.next().await? {
         Some(row) => row,
-        None => return Err(Error::NoDataFound(user_id)),
+        None => return Err(RunInTxError::Any(anyhow::Error::new(tonic::Status::new(tonic::Code::NotFound, "no row found")))),
     };
     let user_id = row.column_by_name::<String>("UserId")?;
-    let user_items = row.column_by_name::<Vec<model::UserItem>>("UserItem")?;
-    let user_characters = row.column_by_name::<Vec<model::UserCharacter>>("UserCharacter")?;
+    let user_items = row.column_by_name::<Vec<model::user_item::UserItem>>("UserItem")?;
+    let user_characters = row.column_by_name::<Vec<model::user_character::UserCharacter>>("UserCharacter")?;
     Ok((user_id, user_items.len(), user_characters.len()))
 }
