@@ -11,7 +11,7 @@ log = "0.4"
 google-cloud-spanner = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 google-cloud-gax = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
-tokio = { version = "1.7", features = ["full"] }
+tokio = { version = "1.14", features = ["full"] }
 tonic = "0.6"
 tonic-web = "0.2.0"
 warp = "0.3"
@@ -22,3 +22,4 @@ env_logger = "0.9"
 anyhow = "1.0"
 uuid = { version="0.8", features = ["v4"] }
 rand = "0.8"
+rust_decimal = "1.18"

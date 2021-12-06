@@ -14,14 +14,6 @@ use warp::Filter;
 mod handler;
 mod model;
 
-#[derive(thiserror::Error, Debug)]
-enum Error {
-    #[error(transparent)]
-    GRPC(#[from] Status),
-    #[error(transparent)]
-    ParseError(#[from] RowError),
-}
-
 fn with_client(client: Client) -> impl Filter<Extract = (Client,), Error = Infallible> + Clone {
     warp::any().map(move || client.clone())
 }
