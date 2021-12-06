@@ -29,6 +29,15 @@ services:
       SPANNER_PROJECT_ID: local-project
       SPANNER_INSTANCE_ID: test-instance
       SPANNER_EMULATOR_HOST: spanner:9010
+  nene:
+    image: ghcr.io/yoshidan/nene/nene:0.1.0
+    command: -o /model
+    volumes:
+      - ./rust/src/model:/model
+    environment:
+      RUST_LOG: info
+      SPANNER_DSN: projects/local-project/instances/test-instance/databases/local-database
+      SPANNER_EMULATOR_HOST: spanner:9010
   rust-api:
     build:
       context: rust
