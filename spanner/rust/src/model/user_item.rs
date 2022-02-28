@@ -3,9 +3,7 @@ use google_cloud_googleapis::spanner::v1::Mutation;
 use google_cloud_googleapis::Status;
 use google_cloud_spanner::client::{RunInTxError, TxError};
 use google_cloud_spanner::key::Key;
-use google_cloud_spanner::mutation::{
-    delete, insert_or_update_struct, insert_struct, replace_struct, update_struct,
-};
+use google_cloud_spanner::mutation::{delete, insert_or_update_struct, insert_struct, replace_struct, update_struct};
 use google_cloud_spanner::reader::AsyncIterator;
 use google_cloud_spanner::row::{Error as RowError, Row, Struct, TryFromStruct};
 use google_cloud_spanner::statement::{Kinds, Statement, ToKind, ToStruct, Types};
@@ -47,32 +45,29 @@ impl UserItem {
         delete(TABLE_NAME, Key::composite(&[&self.user_id, &self.item_id]))
     }
 
-    pub async fn read_by_user_id(
-       tx: &mut Transaction, user_id: &String
-    ) -> Result<Vec<Self>, RunInTxError> {
-         let mut stmt = Statement::new("SELECT * From UserItem WHERE UserId = @UserId");
-         stmt.add_param(COLUMN_USER_ID, user_id);
-         Self::read_by_statement(tx, stmt).await
+    pub async fn read_by_user_id(tx: &mut Transaction, user_id: &String) -> Result<Vec<Self>, RunInTxError> {
+        let mut stmt = Statement::new("SELECT * From UserItem WHERE UserId = @UserId");
+        stmt.add_param(COLUMN_USER_ID, user_id);
+        Self::read_by_statement(tx, stmt).await
     }
 
     pub async fn find_by_pk(
-       tx: &mut Transaction, user_id: &String, item_id: &i64
+        tx: &mut Transaction,
+        user_id: &String,
+        item_id: &i64,
     ) -> Result<Option<Self>, RunInTxError> {
-         let mut stmt = Statement::new("SELECT * From UserItem WHERE UserId = @UserId AND ItemId = @ItemId");
-         stmt.add_param(COLUMN_USER_ID, user_id);
-         stmt.add_param(COLUMN_ITEM_ID, item_id);
-         let mut rows = Self::read_by_statement(tx, stmt).await?;
-         if !rows.is_empty() {
+        let mut stmt = Statement::new("SELECT * From UserItem WHERE UserId = @UserId AND ItemId = @ItemId");
+        stmt.add_param(COLUMN_USER_ID, user_id);
+        stmt.add_param(COLUMN_ITEM_ID, item_id);
+        let mut rows = Self::read_by_statement(tx, stmt).await?;
+        if !rows.is_empty() {
             Ok(rows.pop())
-         } else {
+        } else {
             Ok(None)
-         }
+        }
     }
 
-    pub async fn read_by_statement(
-        tx: &mut Transaction,
-        stmt: Statement,
-    ) -> Result<Vec<Self>, RunInTxError> {
+    pub async fn read_by_statement(tx: &mut Transaction, stmt: Statement) -> Result<Vec<Self>, RunInTxError> {
         let mut reader = tx.query(stmt).await?;
         let mut result = vec![];
         while let Some(row) = reader.next().await? {

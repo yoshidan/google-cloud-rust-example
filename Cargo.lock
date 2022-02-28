@@ -378,31 +378,11 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.1.2"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub#187622e837c6f96df92b0a4d3fc6f5a17a3a4dd9"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#3f5d373bb30f00dd99d6d3194bef5b466db2dd22"
 dependencies = [
  "async-trait",
  "chrono",
- "google-cloud-metadata 0.1.2 (git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub)",
- "home",
- "hyper",
- "hyper-tls",
- "jsonwebtoken",
- "log",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "urlencoding",
-]
-
-[[package]]
-name = "google-cloud-auth"
-version = "0.1.2"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#363612230c9bfa758dbc34dc9eafc489c705be5e"
-dependencies = [
- "async-trait",
- "chrono",
- "google-cloud-metadata 0.1.2 (git+https://github.com/yoshidan/google-cloud-rust?branch=main)",
+ "google-cloud-metadata",
  "home",
  "hyper",
  "hyper-tls",
@@ -417,74 +397,42 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-gax"
-version = "0.3.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#363612230c9bfa758dbc34dc9eafc489c705be5e"
+version = "0.4.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#3f5d373bb30f00dd99d6d3194bef5b466db2dd22"
 dependencies = [
- "google-cloud-googleapis 0.2.1 (git+https://github.com/yoshidan/google-cloud-rust?branch=main)",
+ "google-cloud-auth",
+ "google-cloud-googleapis",
+ "http",
  "log",
+ "prost",
+ "prost-types",
  "rand",
+ "thiserror",
  "tokio",
- "tonic",
-]
-
-[[package]]
-name = "google-cloud-googleapis"
-version = "0.2.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub#187622e837c6f96df92b0a4d3fc6f5a17a3a4dd9"
-dependencies = [
- "prost",
- "prost-types",
- "tonic",
- "tonic-build",
-]
-
-[[package]]
-name = "google-cloud-googleapis"
-version = "0.2.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#363612230c9bfa758dbc34dc9eafc489c705be5e"
-dependencies = [
- "prost",
- "prost-types",
- "tonic",
- "tonic-build",
-]
-
-[[package]]
-name = "google-cloud-grpc"
-version = "0.2.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub#187622e837c6f96df92b0a4d3fc6f5a17a3a4dd9"
-dependencies = [
- "google-cloud-auth 0.1.2 (git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub)",
- "http",
- "prost",
- "prost-types",
- "thiserror",
+ "tokio-retry",
+ "tokio-util 0.7.0",
  "tonic",
  "tower",
 ]
 
 [[package]]
-name = "google-cloud-grpc"
-version = "0.2.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#363612230c9bfa758dbc34dc9eafc489c705be5e"
+name = "google-cloud-googleapis"
+version = "0.3.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#3f5d373bb30f00dd99d6d3194bef5b466db2dd22"
 dependencies = [
- "google-cloud-auth 0.1.2 (git+https://github.com/yoshidan/google-cloud-rust?branch=main)",
- "http",
  "prost",
  "prost-types",
- "thiserror",
  "tonic",
- "tower",
+ "tonic-build",
 ]
 
 [[package]]
 name = "google-cloud-longrunning"
-version = "0.2.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#363612230c9bfa758dbc34dc9eafc489c705be5e"
+version = "0.3.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#3f5d373bb30f00dd99d6d3194bef5b466db2dd22"
 dependencies = [
  "google-cloud-gax",
- "google-cloud-googleapis 0.2.1 (git+https://github.com/yoshidan/google-cloud-rust?branch=main)",
- "google-cloud-grpc 0.2.1 (git+https://github.com/yoshidan/google-cloud-rust?branch=main)",
+ "google-cloud-googleapis",
  "log",
  "prost",
  "prost-types",
@@ -495,17 +443,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.1.2"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub#187622e837c6f96df92b0a4d3fc6f5a17a3a4dd9"
-dependencies = [
- "hyper",
- "thiserror",
- "tokio",
-]
-
-[[package]]
-name = "google-cloud-metadata"
-version = "0.1.2"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#363612230c9bfa758dbc34dc9eafc489c705be5e"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#3f5d373bb30f00dd99d6d3194bef5b466db2dd22"
 dependencies = [
  "hyper",
  "thiserror",
@@ -515,7 +453,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-pubsub"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub#187622e837c6f96df92b0a4d3fc6f5a17a3a4dd9"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#3f5d373bb30f00dd99d6d3194bef5b466db2dd22"
 dependencies = [
  "anyhow",
  "async-channel",
@@ -523,16 +461,14 @@ dependencies = [
  "async-trait",
  "base64 0.13.0",
  "chrono",
- "google-cloud-googleapis 0.2.1 (git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub)",
- "google-cloud-grpc 0.2.1 (git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub)",
+ "google-cloud-gax",
+ "google-cloud-googleapis",
  "log",
  "parking_lot 0.11.2",
  "prost",
  "prost-types",
  "thiserror",
  "tokio",
- "tokio-retry",
- "tokio-util 0.7.0",
  "tonic",
 ]
 
@@ -543,14 +479,14 @@ dependencies = [
  "anyhow",
  "chrono",
  "env_logger",
- "google-cloud-googleapis 0.2.1 (git+https://github.com/yoshidan/google-cloud-rust?branch=feature/pubsub)",
+ "google-cloud-gax",
+ "google-cloud-googleapis",
  "google-cloud-pubsub",
  "log",
  "prost-types",
  "rand",
  "thiserror",
  "tokio",
- "tokio-util 0.7.0",
  "tonic",
  "tonic-web",
  "uuid",
@@ -565,7 +501,7 @@ dependencies = [
  "chrono",
  "env_logger",
  "google-cloud-gax",
- "google-cloud-googleapis 0.2.1 (git+https://github.com/yoshidan/google-cloud-rust?branch=main)",
+ "google-cloud-googleapis",
  "google-cloud-spanner",
  "log",
  "prost-types",
@@ -581,16 +517,15 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-spanner"
-version = "0.4.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#363612230c9bfa758dbc34dc9eafc489c705be5e"
+version = "0.5.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#3f5d373bb30f00dd99d6d3194bef5b466db2dd22"
 dependencies = [
  "anyhow",
  "async-trait",
  "base64 0.13.0",
  "chrono",
  "google-cloud-gax",
- "google-cloud-googleapis 0.2.1 (git+https://github.com/yoshidan/google-cloud-rust?branch=main)",
- "google-cloud-grpc 0.2.1 (git+https://github.com/yoshidan/google-cloud-rust?branch=main)",
+ "google-cloud-googleapis",
  "google-cloud-longrunning",
  "log",
  "parking_lot 0.11.2",

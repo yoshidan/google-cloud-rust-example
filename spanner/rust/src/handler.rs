@@ -64,16 +64,12 @@ pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection
     }
 }
 
-pub async fn update_inventory_handler(
-    client: Client,
-    user_id: String,
-) -> Result<impl Reply, Rejection> {
+pub async fn update_inventory_handler(client: Client, user_id: String) -> Result<impl Reply, Rejection> {
     let tx_result: Result<(Option<Timestamp>, ()), RunInTxError> = client
-        .read_write_transaction(|tx| {
+        .read_write_transaction(|tx, _| {
             let user_id = user_id.clone();
             Box::pin(async move {
-                let mut items =
-                    model::user_item::UserItem::read_by_user_id(tx.deref_mut(), &user_id).await?;
+                let mut items = model::user_item::UserItem::read_by_user_id(tx.deref_mut(), &user_id).await?;
                 let mut ms = vec![];
                 for mut item in items.into_iter() {
                     item.quantity += 1;
@@ -106,10 +102,7 @@ pub async fn update_inventory_handler(
     }
 }
 
-pub async fn read_inventory_handler(
-    client: Client,
-    user_id: String,
-) -> Result<impl Reply, Rejection> {
+pub async fn read_inventory_handler(client: Client, user_id: String) -> Result<impl Reply, Rejection> {
     let mut tx = match client.single().await {
         Ok(tx) => tx,
         Err(_e) => {
@@ -122,10 +115,7 @@ pub async fn read_inventory_handler(
     };
     match read(user_id, tx.deref_mut()).await {
         Ok(inventory) => Ok(warp::reply::with_status(
-            warp::reply::html(format!(
-                "user={}, item={}, character={}",
-                inventory.0, inventory.1, inventory.2
-            )),
+            warp::reply::html(format!("user={}, item={}, character={}", inventory.0, inventory.1, inventory.2)),
             warp::http::StatusCode::OK,
         )),
         Err(e) => {
@@ -138,15 +128,14 @@ pub async fn read_inventory_handler(
     }
 }
 
-async fn read(
-    user_id: String,
-    tx: &mut Transaction,
-) -> Result<(String, usize, usize), RunInTxError> {
-    let mut stmt = Statement::new("SELECT * , \
+async fn read(user_id: String, tx: &mut Transaction) -> Result<(String, usize, usize), RunInTxError> {
+    let mut stmt = Statement::new(
+        "SELECT * , \
             ARRAY (SELECT AS STRUCT * FROM UserItem WHERE UserId = @Param1 ) AS UserItem, \
             ARRAY (SELECT AS STRUCT * FROM UserCharacter WHERE UserId = @Param1 ) AS UserCharacter  \
             FROM User \
-            WHERE UserId = @Param1");
+            WHERE UserId = @Param1",
+    );
     stmt.add_param("Param1", &user_id);
     let mut reader = tx.query(stmt).await?;
     let row = match reader.next().await? {
@@ -160,7 +149,6 @@ async fn read(
     };
     let user_id = row.column_by_name::<String>("UserId")?;
     let user_items = row.column_by_name::<Vec<model::user_item::UserItem>>("UserItem")?;
-    let user_characters =
-        row.column_by_name::<Vec<model::user_character::UserCharacter>>("UserCharacter")?;
+    let user_characters = row.column_by_name::<Vec<model::user_character::UserCharacter>>("UserCharacter")?;
     Ok((user_id, user_items.len(), user_characters.len()))
 }

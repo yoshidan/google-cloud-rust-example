@@ -3,9 +3,7 @@ use google_cloud_googleapis::spanner::v1::Mutation;
 use google_cloud_googleapis::Status;
 use google_cloud_spanner::client::{RunInTxError, TxError};
 use google_cloud_spanner::key::Key;
-use google_cloud_spanner::mutation::{
-    delete, insert_or_update_struct, insert_struct, replace_struct, update_struct,
-};
+use google_cloud_spanner::mutation::{delete, insert_or_update_struct, insert_struct, replace_struct, update_struct};
 use google_cloud_spanner::reader::AsyncIterator;
 use google_cloud_spanner::row::{Error as RowError, Row, Struct, TryFromStruct};
 use google_cloud_spanner::statement::{Kinds, Statement, ToKind, ToStruct, Types};
@@ -45,23 +43,18 @@ impl User {
         delete(TABLE_NAME, Key::key(&self.user_id))
     }
 
-    pub async fn find_by_pk(
-       tx: &mut Transaction, user_id: &String
-    ) -> Result<Option<Self>, RunInTxError> {
-         let mut stmt = Statement::new("SELECT * From User WHERE UserId = @UserId");
-         stmt.add_param(COLUMN_USER_ID, user_id);
-         let mut rows = Self::read_by_statement(tx, stmt).await?;
-         if !rows.is_empty() {
+    pub async fn find_by_pk(tx: &mut Transaction, user_id: &String) -> Result<Option<Self>, RunInTxError> {
+        let mut stmt = Statement::new("SELECT * From User WHERE UserId = @UserId");
+        stmt.add_param(COLUMN_USER_ID, user_id);
+        let mut rows = Self::read_by_statement(tx, stmt).await?;
+        if !rows.is_empty() {
             Ok(rows.pop())
-         } else {
+        } else {
             Ok(None)
-         }
+        }
     }
 
-    pub async fn read_by_statement(
-        tx: &mut Transaction,
-        stmt: Statement,
-    ) -> Result<Vec<Self>, RunInTxError> {
+    pub async fn read_by_statement(tx: &mut Transaction, stmt: Statement) -> Result<Vec<Self>, RunInTxError> {
         let mut reader = tx.query(stmt).await?;
         let mut result = vec![];
         while let Some(row) = reader.next().await? {
