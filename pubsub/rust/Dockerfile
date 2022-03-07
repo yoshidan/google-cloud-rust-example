@@ -5,4 +5,4 @@ COPY . .
 
 RUN cargo install --path .
 
-CMD ["google-cloud-rust-example-pubsub"]
+CMD ["google-cloud-rust-example-spanner"]

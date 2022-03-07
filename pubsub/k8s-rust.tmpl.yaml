@@ -1,0 +1,58 @@
+# Source: api/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rust-api
+  labels:
+    name: rust-api
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: rust-api
+  template:
+    metadata:
+      labels:
+        app: rust-api
+    spec:
+      serviceAccountName: example
+      containers:
+        - name: rust-api
+          securityContext:
+            {}
+          image: "asia.gcr.io/<your_project>/rust-api:latest"
+          imagePullPolicy: Always
+          env:
+            - name: PUBSUB_PROJECT
+              value: <your_project>
+            - name: RUST_LOG
+              value: info
+          ports:
+            - name: http
+              containerPort: 3031
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 2000m
+              memory: 2Gi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rust-api
+  labels:
+    app: rust-api
+spec:
+  type: NodePort
+  ports:
+    - port: 3031
+      targetPort: 3031
+      protocol: TCP
+      name: rust-api
+  selector:
+    app: rust-api
