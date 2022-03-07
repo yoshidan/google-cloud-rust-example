@@ -4,6 +4,25 @@ services:
   pubsub:
     image: messagebird/gcloud-pubsub-emulator:latest
     ports:
-      - 8681:8681
+      - "8681:8681"
     environment:
       PUBSUB_PROJECT1: "local-project,test-topic1:test-subscription1"
+  rust-api:
+    build:
+      context: rust
+    ports:
+      - "3031:3031"
+    links:
+      - pubsub
+    environment:
+      RUST_LOG: info
+      PUBSUB_EMULATOR_HOST: pubsub:8681
+      PUBSUB_PROJECT: local-project
+  loadtest:
+    build:
+      context: scenario
+    ports:
+      - "8089:8089"
+      - "5557:5557"
+    environment:
+      LOCUST_MODE: standalone

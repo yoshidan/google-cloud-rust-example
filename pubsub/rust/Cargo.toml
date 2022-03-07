@@ -11,7 +11,7 @@ log = "0.4"
 google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 google-cloud-gax= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
-tokio = { version = "1.14", features = ["full"] }
+tokio = { version = "1.17", features = ["full"] }
 tonic = "0.6"
 tonic-web = "0.2.0"
 warp = "0.3"

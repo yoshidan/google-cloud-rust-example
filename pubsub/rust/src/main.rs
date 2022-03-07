@@ -15,10 +15,10 @@ use warp::reply::with_status;
 use warp::{reject, Filter};
 use warp::{Rejection, Reply};
 
-async fn publish_handler(ordering_key: String, user_id: String, topic: Publisher) -> Result<impl Reply, Rejection> {
+async fn publish_handler(ordering_key: String, message: String, topic: Publisher) -> Result<impl Reply, Rejection> {
     let awaiter = topic
         .publish(PubsubMessage {
-            data: user_id.as_bytes().to_vec(),
+            data: message.as_bytes().to_vec(),
             attributes: Default::default(),
             message_id: "".to_string(),
             publish_time: None,
@@ -47,10 +47,12 @@ async fn main() {
 
     let uuid = uuid::Uuid::new_v4().to_string();
     log::info!("Start server {}.", uuid);
+    let mut config = SubscriptionConfig::default();
+    config.enable_message_ordering = true;
     let subscription = client
         .create_subscription(&format!("s-{}", uuid.clone()),
             topic.id().as_str(),
-            SubscriptionConfig::default(),
+            config,
             None,
             None,
         )
@@ -62,7 +64,7 @@ async fn main() {
         .and(warp::body::form())
         .and(with_publisher(publisher.clone()))
         .and_then(move |param: HashMap<String, String>, topic| {
-            publish_handler("".to_string(), param.get("user_id").unwrap().to_string(), topic)
+            publish_handler("orderkey".to_string(), param.get("message").unwrap().to_string(), topic)
         });
     let routes = warp::post().and(handler);
 
@@ -86,7 +88,7 @@ async fn main() {
             subscription
                 .receive(
                     |mut message, cancel| async move {
-                        log::info!("received {:?}", message.message.data);
+                        log::info!("received {}", String::from_utf8_lossy(message.message.data.as_slice()).to_string());
                         let result = message.ack().await;
                         log::info!("ack {:?}", result)
                     },
