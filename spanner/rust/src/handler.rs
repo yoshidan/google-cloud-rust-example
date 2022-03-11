@@ -69,7 +69,7 @@ pub async fn update_inventory_handler(client: Client, user_id: String) -> Result
         .read_write_transaction(|tx, _| {
             let user_id = user_id.clone();
             Box::pin(async move {
-                let mut items = model::user_item::UserItem::read_by_user_id(tx.deref_mut(), &user_id).await?;
+                let mut items = model::user_item::UserItem::read_by_user_id(tx.deref_mut(), &user_id, None).await?;
                 let mut ms = vec![];
                 for mut item in items.into_iter() {
                     item.quantity += 1;
