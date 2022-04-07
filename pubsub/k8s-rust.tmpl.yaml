@@ -11,24 +11,24 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: rust-api
+      app: rust-ws
   template:
     metadata:
       labels:
-        app: rust-api
+        app: rust-ws
     spec:
       serviceAccountName: example
       containers:
-        - name: rust-api
+        - name: rust-ws
           securityContext:
             {}
-          image: "asia.gcr.io/<your_project>/rust-api:latest"
+          image: "asia.gcr.io/<your_project>/rust-ws:latest"
           imagePullPolicy: Always
           env:
             - name: PUBSUB_PROJECT
               value: <your_project>
             - name: RUST_LOG
-              value: info
+              value: info,google_cloud_pubsub=trace
           ports:
             - name: http
               containerPort: 3031

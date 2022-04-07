@@ -1,6 +1,4 @@
-# Spanner Example
-* Directory [rust](./rust) is Rust example
-* Directory [scenario](./scenario) is just load test scenario.
+# Pub/Sub Example
 
 ## Run on GKE
 
@@ -35,16 +33,10 @@ gcloud container clusters get-credentials $YOUR_CLUSTER --region asia-northeast1
 gcloud config set container/cluster $YOUR_CLUSTER
 
 cd rust
-docker build -t asia.gcr.io/${YOUR_PROJECT}/rust-api:latest .
-docker push asia.gcr.io/${YOUR_PROJECT}/rust-api:latest
-
-cd scenario
-docker build -t asia.gcr.io/${YOUR_PROJECT}/loadtest:latest .
-docker push asia.gcr.io/${YOUR_PROJECT}/loadtest:latest
+docker build -t asia.gcr.io/${YOUR_PROJECT}/rust-ws:latest .
+docker push asia.gcr.io/${YOUR_PROJECT}/rust-ws:latest
 
 cd ..
-sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-loadtest.tmpl.yaml > k8s-loadtest.gen.yaml
-kubectl apply -f k8s-loadtest.gen.yaml
 sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-rust.tmpl.yaml > k8s-rust.gen.yaml
 kubectl apply -f k8s-rust.gen.yaml
 ```
