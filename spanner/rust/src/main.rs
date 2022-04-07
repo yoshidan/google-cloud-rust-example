@@ -4,11 +4,15 @@ use std::collections::HashMap;
 use std::convert::Infallible;
 
 use tokio::signal::unix::{signal, SignalKind};
+use tracing::instrument::WithSubscriber;
+use tracing::log::Level;
+use tracing_subscriber::fmt;
 
 use warp::Filter;
 
 mod handler;
 mod model;
+mod init;
 
 fn with_client(client: Client) -> impl Filter<Extract = (Client,), Error = Infallible> + Clone {
     warp::any().map(move || client.clone())
@@ -18,8 +22,8 @@ fn with_client(client: Client) -> impl Filter<Extract = (Client,), Error = Infal
 async fn main() {
     let database = std::env::var("SPANNER_DSN").unwrap();
 
-    env_logger::init();
-    log::info!("Start server.");
+    init::init_trace();
+    tracing::info!("Start server.");
 
     let mut sigint = signal(SignalKind::interrupt()).unwrap();
     let mut sigterm = signal(SignalKind::terminate()).unwrap();
@@ -51,9 +55,9 @@ async fn main() {
     // launch server
     let (tx, rx) = tokio::sync::oneshot::channel();
     let (_, server) = warp::serve(routes).bind_with_graceful_shutdown(([0, 0, 0, 0], 3031), async {
-        log::info!("Listening on http://0.0.0.0:3031");
+        tracing::info!("Listening on http://0.0.0.0:3031");
         rx.await.ok();
-        log::info!("Shutdown server");
+        tracing::info!("Shutdown server");
     });
 
     tokio::spawn(server);
@@ -65,5 +69,5 @@ async fn main() {
     };
     let _ = tx.send(());
     client.close().await;
-    log::info!("All the spanner sessions are deleted.");
+    tracing::info!("All the spanner sessions are deleted.");
 }

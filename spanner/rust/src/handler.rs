@@ -17,7 +17,9 @@ use warp::{Rejection, Reply};
 use google_cloud_spanner::value::Timestamp;
 
 use std::convert::TryFrom;
+use tracing::instrument;
 
+#[instrument(skip(client))]
 pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection> {
     let mut ms = vec![];
     let user_id = Uuid::new_v4().to_string();
@@ -52,7 +54,7 @@ pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection
             warp::http::StatusCode::OK,
         )),
         Err(e) => {
-            log::error!("error {:?}", e);
+            tracing::error!("error {:?}", e);
             Ok(warp::reply::with_status(
                 warp::reply::html(match e {
                     TxError::GRPC(e) => e.to_string(),
@@ -64,6 +66,7 @@ pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection
     }
 }
 
+#[instrument(skip(client))]
 pub async fn update_inventory_handler(client: Client, user_id: String) -> Result<impl Reply, Rejection> {
     let tx_result: Result<(Option<Timestamp>, ()), RunInTxError> = client
         .read_write_transaction(|tx, _| {
@@ -93,7 +96,7 @@ pub async fn update_inventory_handler(client: Client, user_id: String) -> Result
             warp::http::StatusCode::OK,
         )),
         Err(e) => {
-            log::error!("error {:?}", e);
+            tracing::error!("error {:?}", e);
             Ok(warp::reply::with_status(
                 warp::reply::html(format!("error {:?}", e)),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
@@ -102,6 +105,7 @@ pub async fn update_inventory_handler(client: Client, user_id: String) -> Result
     }
 }
 
+#[instrument(skip(client))]
 pub async fn read_inventory_handler(client: Client, user_id: String) -> Result<impl Reply, Rejection> {
     let mut tx = match client.single().await {
         Ok(tx) => tx,
@@ -119,7 +123,7 @@ pub async fn read_inventory_handler(client: Client, user_id: String) -> Result<i
             warp::http::StatusCode::OK,
         )),
         Err(e) => {
-            log::error!("error {:?}", e);
+            tracing::error!("error {:?}", e);
             Ok(warp::reply::with_status(
                 warp::reply::html(format!("error {:?}", e)),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,

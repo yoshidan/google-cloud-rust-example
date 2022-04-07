@@ -7,18 +7,18 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-log = "0.4"
-google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
-google-cloud-gax= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
-google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
-tokio = { version = "1.17", features = ["full"] }
-tonic = "0.6"
-tonic-web = "0.2.0"
-warp = "0.3"
-chrono = "0.4"
-prost-types = "0.9.0"
-thiserror = "1.0"
-env_logger = "0.9"
-anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = {version="0.3", features=["env-filter"]}
+opentelemetry = {version="0.17", features=["rt-tokio"]}
+opentelemetry-stackdriver = { version= "0.14", features=["gcp_auth"]}
+tracing-opentelemetry = "0.17"
+google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
+google-cloud-gax= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
+google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
+warp = "0.3.1"
+tokio = "1.17.0"
+env_logger = "0.8.1"
+futures-util= "0.3.21"
+parking_lot = "0.12.0"
+chrono = "0.4.19"
 uuid = { version="0.8", features = ["v4"] }
-rand = "0.8"
