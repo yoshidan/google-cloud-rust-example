@@ -4,6 +4,7 @@ use opentelemetry::sdk::trace::{Config, Sampler,TracerProvider};
 use opentelemetry::trace::TracerProvider as _;
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 use opentelemetry_stackdriver::{GcpAuthorizer, LogContext, StackDriverExporter, MonitoredResource};
+use tracing_stackdriver::Stackdriver;
 
 pub async fn init_trace(project_id: &str) {
 
@@ -32,7 +33,7 @@ pub async fn init_trace(project_id: &str) {
     let telemetry = tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing"));
     tracing_subscriber::registry()
         .with(telemetry)
-        .with(tracing_subscriber::fmt::layer())
+        .with(Stackdriver::default())
         .with(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
 }

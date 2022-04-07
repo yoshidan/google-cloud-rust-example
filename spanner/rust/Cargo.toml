@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 tracing = "0.1"
 tracing-subscriber = {version="0.3", features=["env-filter"]}
+tracing-stackdriver = "0.3"
 opentelemetry = {version="0.17", features=["rt-tokio"]}
 opentelemetry-stackdriver = { version= "0.14", features=["gcp_auth"]}
 tracing-opentelemetry = "0.17"
