@@ -4,7 +4,7 @@ mod connection;
 
 use crate::connection::{Connection, CHANNEL_ID_KEY, PONG_FRAME, USER_ID_KEY, PING_FRAME};
 use futures_util::stream::SplitSink;
-use futures_util::StreamExt;
+use futures_util::{SinkExt, StreamExt};
 use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_googleapis::pubsub::v1::PubsubMessage;
 use google_cloud_pubsub::client::Client;
@@ -17,6 +17,9 @@ use std::io::Write;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::Duration;
+use opentelemetry::Context;
+use tracing_subscriber::registry::ExtensionsMut;
+use opentelemetry_stackdriver::LogContext;
 use tokio::signal::unix::{signal, SignalKind};
 use tokio::task::JoinHandle;
 use warp::http::StatusCode;
@@ -29,12 +32,63 @@ struct InvalidParameter;
 
 impl warp::reject::Reject for InvalidParameter {}
 
-mod init;
+use opentelemetry::sdk::Resource;
+use opentelemetry::runtime::Tokio;
+use opentelemetry::sdk::trace::{Config, Sampler,TracerProvider};
+use opentelemetry::trace::{TraceContextExt, TracerProvider as _};
+use tracing_subscriber::{EnvFilter, fmt, prelude::*};
+use opentelemetry_stackdriver::{GcpAuthorizer, StackDriverExporter, MonitoredResource};
+use tracing_opentelemetry::OpenTelemetrySpanExt;
+use tracing_stackdriver::Stackdriver;
+use crate::tracer::CustomLayer;
+
+#[tracing::instrument()]
+fn testlog(id: String) {
+    tracing::info!(http_request.request_url= "GET", "in span {}", id);
+    tracing::info!(http_request.request_method= "GET", "in span2 {}", id);
+}
 
 #[tokio::main]
 async fn main() {
     let project_id = std::env::var("PUBSUB_PROJECT").unwrap();
-    init::init_trace(project_id.as_str()).await;
+
+    let log_context = LogContext {
+        log_id: "cloud-trace-test".into(),
+        resource: MonitoredResource::GenericNode {
+            project_id: project_id.to_string(),
+            location: None,
+            namespace: None,
+            node_id: None
+        },
+    };
+    let authorizer = GcpAuthorizer::new().await.unwrap();
+    let (exporter, driver) = StackDriverExporter::builder()
+        .log_context(log_context)
+        .build(authorizer)
+        .await.unwrap();
+
+    let j = tokio::spawn(driver);
+
+    let provider = TracerProvider::builder()
+        .with_batch_exporter(exporter.clone(), Tokio)
+        .with_config(Config {
+            sampler: Box::new(Sampler::TraceIdRatioBased(1.0)),
+            ..Default::default()
+        })
+        .build();
+
+
+    let telemetry = tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing") );
+    tracing_subscriber::registry()
+        .with(telemetry)
+       // .with(CustomLayer)
+        .with(tracing_stackdriver::Stackdriver::new())
+        .with(tracing_subscriber::filter::EnvFilter::from_default_env())
+        .init();
+    tracing::info!(http_request.request_method= "GET", "no span {}", google_cloud_gax::grpc::Status::cancelled("message"));
+    testlog("hogehoge1".to_string());
+    testlog("hogehoge2".to_string());
+
     let client = Client::new(&project_id, None).await.unwrap();
     let topic = client.topic("chat");
     let uuid = uuid::Uuid::new_v4().to_string();
@@ -131,6 +185,7 @@ async fn main() {
     let _ = publisher.shutdown();
 
     tracing::info!("Shutdown complete.");
+    j.abort();
 }
 
 fn start_subscribe(
@@ -246,7 +301,6 @@ async fn handle_ws_client(
             on_receive(user_id.clone(), channel_id.clone(), &publisher, data).await
         }
 
-        tracing::info!("client disconnected");
 
         // remove client
         let mut lock = cons.write();
