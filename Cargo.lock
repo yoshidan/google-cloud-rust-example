@@ -268,7 +268,7 @@ version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c1a816186fa68d9e426e3cb4ae4dff1fcd8e4a2c34b781bf7a822574a0d0aac8"
 dependencies = [
- "sct 0.6.1",
+ "sct",
 ]
 
 [[package]]
@@ -288,27 +288,6 @@ checksum = "f2fb860ca6fafa5552fb6d0e816a69c8e49f0908bf524e30a90d97c85892d506"
 dependencies = [
  "block-buffer 0.10.2",
  "crypto-common",
-]
-
-[[package]]
-name = "dirs-next"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b98cf8ebf19c3d1b223e151f99a4f9f0690dca41414773390fc824184ac833e1"
-dependencies = [
- "cfg-if",
- "dirs-sys-next",
-]
-
-[[package]]
-name = "dirs-sys-next"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ebda144c4fe02d1f7ea1a7d9641b6fc6b580adcfa024ae48797ecdeb6825b4d"
-dependencies = [
- "libc",
- "redox_users",
- "winapi",
 ]
 
 [[package]]
@@ -485,31 +464,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gcp_auth"
-version = "0.7.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4900aaccc49d903944fb9e43b8ef1b2a83b1900727eb3ec96a8d5c18dad545c9"
-dependencies = [
- "async-trait",
- "base64 0.13.0",
- "dirs-next",
- "hyper",
- "hyper-rustls 0.23.0",
- "ring",
- "rustls 0.20.4",
- "rustls-pemfile 0.3.0",
- "serde",
- "serde_json",
- "thiserror",
- "time 0.3.9",
- "tokio",
- "tracing",
- "tracing-futures",
- "url",
- "which",
-]
-
-[[package]]
 name = "generic-array"
 version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -627,13 +581,10 @@ dependencies = [
  "google-cloud-gax",
  "google-cloud-googleapis",
  "google-cloud-pubsub",
- "opentelemetry",
- "opentelemetry-stackdriver",
  "parking_lot 0.12.0",
  "tokio",
  "tracing",
- "tracing-opentelemetry",
- "tracing-stackdriver 0.3.0 (git+https://github.com/yoshidan/tracing-stackdriver?branch=feature/with-span-trace-id)",
+ "tracing-stackdriver",
  "tracing-subscriber",
  "uuid",
  "warp",
@@ -644,8 +595,10 @@ name = "google-cloud-rust-example-spanner"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "chrono",
  "env_logger 0.9.0",
+ "google-cloud-auth",
  "google-cloud-gax",
  "google-cloud-googleapis",
  "google-cloud-spanner",
@@ -660,7 +613,7 @@ dependencies = [
  "tonic-web",
  "tracing",
  "tracing-opentelemetry",
- "tracing-stackdriver 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tracing-stackdriver",
  "tracing-subscriber",
  "uuid",
  "warp",
@@ -843,25 +796,11 @@ dependencies = [
  "futures-util",
  "hyper",
  "log",
- "rustls 0.19.1",
- "rustls-native-certs 0.5.0",
+ "rustls",
+ "rustls-native-certs",
  "tokio",
- "tokio-rustls 0.22.0",
- "webpki 0.21.4",
-]
-
-[[package]]
-name = "hyper-rustls"
-version = "0.23.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d87c48c02e0dc5e3b849a2041db3029fd066650f8f717c07bf8ed78ccb895cac"
-dependencies = [
- "http",
- "hyper",
- "rustls 0.20.4",
- "rustls-native-certs 0.6.1",
- "tokio",
- "tokio-rustls 0.23.3",
+ "tokio-rustls",
+ "webpki",
 ]
 
 [[package]]
@@ -1209,7 +1148,6 @@ dependencies = [
  "percent-encoding",
  "pin-project",
  "rand",
- "serde",
  "thiserror",
  "tokio",
  "tokio-stream",
@@ -1223,11 +1161,10 @@ checksum = "43f1fa6aa4bcdafe109e75ecec0e1df231d2f0ac1a684306840a14f082cd70f3"
 dependencies = [
  "async-trait",
  "futures",
- "gcp_auth",
  "hex",
  "http",
  "hyper",
- "hyper-rustls 0.22.1",
+ "hyper-rustls",
  "opentelemetry",
  "prost",
  "prost-types",
@@ -1472,17 +1409,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "redox_users"
-version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b033d837a7cf162d7993aded9304e30a83213c648b6e389db233191f891e5c2b"
-dependencies = [
- "getrandom",
- "redox_syscall",
- "thiserror",
-]
-
-[[package]]
 name = "regex"
 version = "1.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1552,20 +1478,8 @@ dependencies = [
  "base64 0.13.0",
  "log",
  "ring",
- "sct 0.6.1",
- "webpki 0.21.4",
-]
-
-[[package]]
-name = "rustls"
-version = "0.20.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4fbfeb8d0ddb84706bc597a5574ab8912817c52a397f819e5b614e2265206921"
-dependencies = [
- "log",
- "ring",
- "sct 0.7.0",
- "webpki 0.22.0",
+ "sct",
+ "webpki",
 ]
 
 [[package]]
@@ -1575,39 +1489,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a07b7c1885bd8ed3831c289b7870b13ef46fe0e856d288c30d9cc17d75a2092"
 dependencies = [
  "openssl-probe",
- "rustls 0.19.1",
+ "rustls",
  "schannel",
  "security-framework",
-]
-
-[[package]]
-name = "rustls-native-certs"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ca9ebdfa27d3fc180e42879037b5338ab1c040c06affd00d8338598e7800943"
-dependencies = [
- "openssl-probe",
- "rustls-pemfile 0.2.1",
- "schannel",
- "security-framework",
-]
-
-[[package]]
-name = "rustls-pemfile"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5eebeaeb360c87bfb72e84abdb3447159c0eaececf1bef2aecd65a8be949d1c9"
-dependencies = [
- "base64 0.13.0",
-]
-
-[[package]]
-name = "rustls-pemfile"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ee86d63972a7c661d1536fefe8c3c8407321c3df668891286de28abcd087360"
-dependencies = [
- "base64 0.13.0",
 ]
 
 [[package]]
@@ -1649,16 +1533,6 @@ name = "sct"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b362b83898e0e69f38515b82ee15aa80636befe47c3b6d3d89a911e78fc228ce"
-dependencies = [
- "ring",
- "untrusted",
-]
-
-[[package]]
-name = "sct"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d53dcdb7c9f8158937a7981b48accfd39a43af418591a5d008c7b22b5e1b7ca4"
 dependencies = [
  "ring",
  "untrusted",
@@ -1985,20 +1859,9 @@ version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc6844de72e57df1980054b38be3a9f4702aba4858be64dd700181a8a6d0e1b6"
 dependencies = [
- "rustls 0.19.1",
+ "rustls",
  "tokio",
- "webpki 0.21.4",
-]
-
-[[package]]
-name = "tokio-rustls"
-version = "0.23.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4151fda0cf2798550ad0b34bcfc9b9dcc2a9d2471c895c68f3a8818e54f2389e"
-dependencies = [
- "rustls 0.20.4",
- "tokio",
- "webpki 0.22.0",
+ "webpki",
 ]
 
 [[package]]
@@ -2074,9 +1937,9 @@ dependencies = [
  "pin-project",
  "prost",
  "prost-derive",
- "rustls-native-certs 0.5.0",
+ "rustls-native-certs",
  "tokio",
- "tokio-rustls 0.22.0",
+ "tokio-rustls",
  "tokio-stream",
  "tokio-util 0.6.9",
  "tower",
@@ -2229,30 +2092,12 @@ dependencies = [
 [[package]]
 name = "tracing-stackdriver"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9177e3d66b9fed14ee52116faf07170ee8e3c06494567f44b9a72763718b0b43"
+source = "git+https://github.com/yoshidan/tracing-stackdriver?branch=feature/with-span-trace-id#8b4e45eb94ad328fcee4cf9d3b7cdb2f224db7c2"
 dependencies = [
  "Inflector",
  "chrono",
  "futures",
- "serde",
- "serde_json",
- "thiserror",
- "tracing-core",
- "tracing-futures",
- "tracing-serde",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "tracing-stackdriver"
-version = "0.3.0"
-source = "git+https://github.com/yoshidan/tracing-stackdriver?branch=feature/with-span-trace-id#cf37bd36a8e427fbd11ee93e1f39a85be1a40318"
-dependencies = [
- "Inflector",
- "chrono",
- "futures",
- "opentelemetry",
+ "hex",
  "serde",
  "serde_json",
  "thiserror",
@@ -2544,16 +2389,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "webpki"
-version = "0.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f095d78192e208183081cc07bc5515ef55216397af48b873e5edcd72637fa1bd"
-dependencies = [
- "ring",
- "untrusted",
-]
-
-[[package]]
 name = "which"
 version = "4.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2650,11 +2485,11 @@ dependencies = [
  "futures",
  "http",
  "hyper",
- "hyper-rustls 0.22.1",
+ "hyper-rustls",
  "itertools",
  "log",
  "percent-encoding",
- "rustls 0.19.1",
+ "rustls",
  "seahash",
  "serde",
  "serde_json",

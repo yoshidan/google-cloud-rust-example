@@ -38,6 +38,7 @@ services:
       - spanner
     environment:
       RUST_LOG: info,google_cloud_spanner=trace
+      PROJECT_ID: local-project
       SPANNER_EMULATOR_HOST: spanner:9010
       SPANNER_DSN: projects/local-project/instances/test-instance/databases/local-database
   go-api:

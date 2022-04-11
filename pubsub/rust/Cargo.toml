@@ -8,11 +8,8 @@ edition = "2018"
 
 [dependencies]
 tracing = "0.1"
-tracing-stackdriver = { git = "https://github.com/yoshidan/tracing-stackdriver", branch = "feature/with-span-trace-id", features=["otel"]}
-tracing-subscriber = {version="0.3", features=["std", "env-filter","json"]}
-opentelemetry = {version="0.17", features=["rt-tokio", "trace"]}
-opentelemetry-stackdriver = { version= "0.14", features=["gcp_auth"]}
-tracing-opentelemetry = "0.17"
+tracing-stackdriver = { git = "https://github.com/yoshidan/tracing-stackdriver", branch = "feature/with-span-trace-id" }
+tracing-subscriber = {version="0.3", features=["std", "env-filter"]}
 google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
 google-cloud-gax= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
 google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}

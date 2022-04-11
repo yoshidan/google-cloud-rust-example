@@ -2,11 +2,14 @@ use google_cloud_spanner::client::Client;
 
 use std::collections::HashMap;
 use std::convert::Infallible;
+use opentelemetry::trace::TracerProvider;
 
 use tokio::signal::unix::{signal, SignalKind};
 use tracing::instrument::WithSubscriber;
 use tracing::log::Level;
 use tracing_subscriber::fmt;
+use tracing_subscriber::prelude::__tracing_subscriber_SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
 
 use warp::Filter;
 
@@ -21,8 +24,15 @@ fn with_client(client: Client) -> impl Filter<Extract = (Client,), Error = Infal
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
     let database = std::env::var("SPANNER_DSN").unwrap();
+    let project_id = std::env::var("PROJECT_ID").unwrap();
 
-    init::init_trace();
+    let (j,provider) = init::create_tracer_provider(project_id.as_str()).await;
+    tracing_subscriber::registry()
+        .with( tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing") ))
+        .with(tracing_stackdriver::Stackdriver::new())
+        .with(tracing_subscriber::filter::EnvFilter::from_default_env())
+        .init();
+
     tracing::info!("Start server.");
 
     let mut sigint = signal(SignalKind::interrupt()).unwrap();
