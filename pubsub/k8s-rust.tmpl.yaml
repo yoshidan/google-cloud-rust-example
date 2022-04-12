@@ -31,7 +31,7 @@ spec:
               value: info,google_cloud_pubsub=trace
           ports:
             - name: http
-              containerPort: 3031
+              containerPort: 8091
               protocol: TCP
           resources:
             requests:
@@ -50,8 +50,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 3031
-      targetPort: 3031
+    - port: 8091
+      targetPort: 8091
       protocol: TCP
       name: rust-ws
   selector:
