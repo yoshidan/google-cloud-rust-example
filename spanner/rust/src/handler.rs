@@ -17,10 +17,12 @@ use warp::{Rejection, Reply};
 use google_cloud_spanner::value::Timestamp;
 
 use std::convert::TryFrom;
+use google_cloud_spanner::transaction_rw::ReadWriteTransaction;
 use tracing::instrument;
 
 #[instrument(skip(client))]
 pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection> {
+    tracing::info!("request: create_user_handler");
     let mut ms = vec![];
     let user_id = Uuid::new_v4().to_string();
     let user = model::user::User {
@@ -68,18 +70,12 @@ pub async fn create_user_handler(client: Client) -> Result<impl Reply, Rejection
 
 #[instrument(skip(client))]
 pub async fn update_inventory_handler(client: Client, user_id: String) -> Result<impl Reply, Rejection> {
+    tracing::info!("request: update_inventory_handler");
     let tx_result: Result<(Option<Timestamp>, ()), RunInTxError> = client
         .read_write_transaction(|tx, _| {
             let user_id = user_id.clone();
             Box::pin(async move {
-                let mut items = model::user_item::UserItem::read_by_user_id(tx.deref_mut(), &user_id, None).await?;
-                let mut ms = vec![];
-                for mut item in items.into_iter() {
-                    item.quantity += 1;
-                    ms.push(item.update());
-                }
-                tx.buffer_write(ms);
-                Ok(())
+                update_inventory(tx, user_id).await
             })
         })
         .await;
@@ -105,19 +101,32 @@ pub async fn update_inventory_handler(client: Client, user_id: String) -> Result
     }
 }
 
+#[instrument(skip(tx))]
+async fn update_inventory(tx: &mut ReadWriteTransaction, user_id: String) -> Result<(), RunInTxError> {
+    tracing::info!("update_inventory");
+    let mut items = model::user_item::UserItem::read_by_user_id(tx.deref_mut(), &user_id, None).await?;
+    let mut ms = vec![];
+    for mut item in items.into_iter() {
+        item.quantity += 1;
+        ms.push(item.update());
+    }
+    tx.buffer_write(ms);
+    Ok(())
+}
+
 #[instrument(skip(client))]
 pub async fn read_inventory_handler(client: Client, user_id: String) -> Result<impl Reply, Rejection> {
+    tracing::info!("request: read_inventory_handler");
     let mut tx = match client.single().await {
         Ok(tx) => tx,
-        Err(_e) => {
-            let error_message = "aaa".to_string();
+        Err(e) => {
             return Ok(warp::reply::with_status(
-                warp::reply::html(error_message),
+                warp::reply::html(format!("error {:?}", e)),
                 warp::http::StatusCode::INTERNAL_SERVER_ERROR,
             ));
         }
     };
-    match read(user_id, tx.deref_mut()).await {
+    match read_inventory(user_id, tx.deref_mut()).await {
         Ok(inventory) => Ok(warp::reply::with_status(
             warp::reply::html(format!("user={}, item={}, character={}", inventory.0, inventory.1, inventory.2)),
             warp::http::StatusCode::OK,
@@ -132,7 +141,9 @@ pub async fn read_inventory_handler(client: Client, user_id: String) -> Result<i
     }
 }
 
-async fn read(user_id: String, tx: &mut Transaction) -> Result<(String, usize, usize), RunInTxError> {
+#[instrument(skip(tx))]
+async fn read_inventory(user_id: String, tx: &mut Transaction) -> Result<(String, usize, usize), RunInTxError> {
+    tracing::info!("read_inventory");
     let mut stmt = Statement::new(
         "SELECT * , \
             ARRAY (SELECT AS STRUCT * FROM UserItem WHERE UserId = @Param1 ) AS UserItem, \

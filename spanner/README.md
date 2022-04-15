@@ -23,7 +23,7 @@ curl -X POST localhost:3031/CreateUser
 ### Create GKE Autopilot Cluster
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=<your_credentials_json_path>
-export YOUR_PROJECT=<your_project>
+export YOUR_PROJECT=atl-dev1
 export YOUR_ACCOUNT=<your_account>
 export YOUR_CLUSTER=example
 

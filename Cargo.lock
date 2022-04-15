@@ -2092,7 +2092,7 @@ dependencies = [
 [[package]]
 name = "tracing-stackdriver"
 version = "0.3.0"
-source = "git+https://github.com/yoshidan/tracing-stackdriver?branch=feature/with-span-trace-id#8b4e45eb94ad328fcee4cf9d3b7cdb2f224db7c2"
+source = "git+https://github.com/yoshidan/tracing-stackdriver?branch=feature/with-span-trace-id-fixbug#2bfc14b1a710ef2b0000774b2df9e44d8a8e5643"
 dependencies = [
  "Inflector",
  "chrono",

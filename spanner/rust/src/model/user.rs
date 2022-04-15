@@ -13,6 +13,7 @@ use google_cloud_spanner::transaction::Transaction;
 use google_cloud_spanner::transaction::CallOptions;
 use google_cloud_spanner::value::CommitTimestamp;
 use std::convert::TryFrom;
+use tracing::instrument;
 
 pub const TABLE_NAME: &str = "User";
 pub const COLUMN_USER_ID: &str = "UserId";
@@ -46,6 +47,7 @@ impl User {
         delete(TABLE_NAME, Key::key(&self.user_id))
     }
 
+    #[instrument(skip_all)]
     pub async fn find_by_pk(
         tx: &mut Transaction, user_id: &String, options: Option<CallOptions>
     ) -> Result<Option<Self>, RunInTxError> {
@@ -59,6 +61,7 @@ impl User {
         }
     }
 
+    #[instrument(skip_all)]
     pub async fn read_by_statement(
         tx: &mut Transaction,
         stmt: Statement,

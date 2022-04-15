@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 tracing = "0.1"
-tracing-stackdriver = { git = "https://github.com/yoshidan/tracing-stackdriver", branch = "feature/with-span-trace-id", features=["otel"]}
+tracing-stackdriver = { git = "https://github.com/yoshidan/tracing-stackdriver", branch = "feature/with-span-trace-id-fixbug", features=["otel"]}
 tracing-subscriber = {version="0.3", features=["std", "env-filter"]}
 opentelemetry = {version="0.17", features=["rt-tokio", "trace"]}
 opentelemetry-stackdriver = { version= "0.14" }
