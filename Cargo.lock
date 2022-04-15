@@ -487,7 +487,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.1.3"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#2dcd32d65ec35eb9bc4e85f7a015f887919887f5"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
 dependencies = [
  "async-trait",
  "chrono",
@@ -506,7 +506,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.4.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#2dcd32d65ec35eb9bc4e85f7a015f887919887f5"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
 dependencies = [
  "google-cloud-auth",
  "google-cloud-googleapis",
@@ -525,7 +525,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.3.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#2dcd32d65ec35eb9bc4e85f7a015f887919887f5"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
 dependencies = [
  "prost",
  "prost-types",
@@ -536,7 +536,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-longrunning"
 version = "0.3.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#2dcd32d65ec35eb9bc4e85f7a015f887919887f5"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
 dependencies = [
  "google-cloud-gax",
  "google-cloud-googleapis",
@@ -547,8 +547,8 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-metadata"
-version = "0.1.2"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#2dcd32d65ec35eb9bc4e85f7a015f887919887f5"
+version = "0.1.3"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
 dependencies = [
  "hyper",
  "thiserror",
@@ -558,7 +558,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-pubsub"
 version = "0.1.3"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#2dcd32d65ec35eb9bc4e85f7a015f887919887f5"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
 dependencies = [
  "async-channel",
  "async-stream",
@@ -622,7 +622,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner"
 version = "0.6.4"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#2dcd32d65ec35eb9bc4e85f7a015f887919887f5"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -746,9 +746,9 @@ dependencies = [
 
 [[package]]
 name = "httparse"
-version = "1.6.0"
+version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9100414882e15fb7feccb4897e5f0ff0ff1ca7d1a86a23208ada4d7a18e6c6c4"
+checksum = "6330e8a36bd8c859f3fa6d9382911fbb7147ec39807f63b923933a247240b9ba"
 
 [[package]]
 name = "httpdate"
@@ -904,9 +904,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.122"
+version = "0.2.123"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec647867e2bf0772e28c8bcde4f0d19a9216916e890543b5a03ed8ef27b8f259"
+checksum = "cb691a747a7ab48abc15c5b42066eaafde10dc427e3b6ee2a1cf43db04c763bd"
 
 [[package]]
 name = "lock_api"
@@ -2013,9 +2013,9 @@ checksum = "360dfd1d6d30e05fda32ace2c8c70e9c0a9da713275777f5a4dbb8a1893930c6"
 
 [[package]]
 name = "tracing"
-version = "0.1.33"
+version = "0.1.34"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80b9fa4360528139bc96100c160b7ae879f5567f49f1782b0b02035b0358ebf3"
+checksum = "5d0ecdcb44a79f0fe9844f0c4f33a342cbcbb5117de8001e6ba0dc2351327d09"
 dependencies = [
  "cfg-if",
  "log",
@@ -2037,9 +2037,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-core"
-version = "0.1.24"
+version = "0.1.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90442985ee2f57c9e1b548ee72ae842f4a9a20e3f417cc38dbc5dc684d9bb4ee"
+checksum = "f54c8ca710e81886d498c2fd3331b56c93aa248d49de2222ad2742247c60072f"
 dependencies = [
  "lazy_static",
  "valuable",
