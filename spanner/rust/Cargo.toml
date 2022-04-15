@@ -13,10 +13,10 @@ tracing-subscriber = {version="0.3", features=["std", "env-filter"]}
 opentelemetry = {version="0.17", features=["rt-tokio", "trace"]}
 opentelemetry-stackdriver = { version= "0.14" }
 tracing-opentelemetry = "0.17"
-google-cloud-spanner = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
-google-cloud-gax = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
-google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
-google-cloud-auth= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
+google-cloud-spanner = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
+google-cloud-gax = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
+google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
+google-cloud-auth= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 tokio = { version = "1.14", features = ["full"] }
 tonic = "0.6"
 tonic-web = "0.2.0"

@@ -487,7 +487,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.1.3"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#8fc907cd0e56262215947e75a662505f6c9dda25"
 dependencies = [
  "async-trait",
  "chrono",
@@ -506,7 +506,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.4.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#8fc907cd0e56262215947e75a662505f6c9dda25"
 dependencies = [
  "google-cloud-auth",
  "google-cloud-googleapis",
@@ -525,7 +525,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.3.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#8fc907cd0e56262215947e75a662505f6c9dda25"
 dependencies = [
  "prost",
  "prost-types",
@@ -536,7 +536,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-longrunning"
 version = "0.3.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#8fc907cd0e56262215947e75a662505f6c9dda25"
 dependencies = [
  "google-cloud-gax",
  "google-cloud-googleapis",
@@ -548,7 +548,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.1.3"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#8fc907cd0e56262215947e75a662505f6c9dda25"
 dependencies = [
  "hyper",
  "thiserror",
@@ -558,7 +558,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-pubsub"
 version = "0.1.3"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#8fc907cd0e56262215947e75a662505f6c9dda25"
 dependencies = [
  "async-channel",
  "async-stream",
@@ -622,7 +622,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner"
 version = "0.6.4"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=featurea/add_tracing#647b2bed603ab70fd4acfd563233a49f29c1f340"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#8fc907cd0e56262215947e75a662505f6c9dda25"
 dependencies = [
  "anyhow",
  "async-trait",

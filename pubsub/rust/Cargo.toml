@@ -10,11 +10,11 @@ edition = "2018"
 tracing = "0.1"
 tracing-stackdriver = { git = "https://github.com/yoshidan/tracing-stackdriver", branch = "feature/with-span-trace-id-fixbug", features=["otel"]}
 tracing-subscriber = {version="0.3", features=["std", "env-filter"]}
-google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
-google-cloud-gax= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
-google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "featurea/add_tracing"}
+google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
+google-cloud-gax= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
+google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 warp = "0.3.1"
-tokio = "1.17.0"
+tokio = { version = "1.14", features = ["full"] }
 env_logger = "0.8.1"
 futures-util= "0.3.21"
 parking_lot = "0.12.0"
