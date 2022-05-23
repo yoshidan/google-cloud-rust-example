@@ -17,4 +17,3 @@ services:
     environment:
       RUST_LOG: info,google_cloud_pubsub=trace
       PUBSUB_EMULATOR_HOST: pubsub:8681
-      PUBSUB_PROJECT: local-project

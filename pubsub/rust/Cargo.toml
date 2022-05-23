@@ -20,3 +20,4 @@ futures-util= "0.3.21"
 parking_lot = "0.12.0"
 chrono = "0.4.19"
 uuid = { version="0.8", features = ["v4"] }
+tonic = "0.6"

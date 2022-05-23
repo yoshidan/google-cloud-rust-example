@@ -7,7 +7,7 @@ use futures_util::stream::SplitSink;
 use futures_util::{SinkExt, StreamExt};
 use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_googleapis::pubsub::v1::PubsubMessage;
-use google_cloud_pubsub::client::Client;
+use google_cloud_pubsub::client::{Client, ClientConfig};
 use google_cloud_pubsub::publisher::Publisher;
 use google_cloud_pubsub::subscription::{Subscription, SubscriptionConfig};
 use parking_lot::RwLock;
@@ -34,13 +34,12 @@ impl warp::reject::Reject for InvalidParameter {}
 
 #[tokio::main]
 async fn main() {
-    let project_id = std::env::var("PUBSUB_PROJECT").unwrap();
     tracing_subscriber::registry()
         .with(tracing_stackdriver::Stackdriver::new())
         .with(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
 
-    let client = Client::new(&project_id, None).await.unwrap();
+    let client = Client::default().await.unwrap();
     let topic = client.topic("chat");
     let uuid = uuid::Uuid::new_v4().to_string();
     let subscription = client
