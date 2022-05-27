@@ -633,6 +633,7 @@ dependencies = [
  "google-cloud-auth",
  "google-cloud-gax",
  "google-cloud-googleapis",
+ "google-cloud-metadata",
  "google-cloud-pubsub",
  "parking_lot 0.12.0",
  "tokio",

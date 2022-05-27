@@ -39,8 +39,20 @@ async fn main() {
         .with(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
 
+    let cred = google_cloud_auth::credentials::CredentialsFile::new().await;
+    match cred {
+        Ok(cred) => {
+            tracing::info!("cred-project-id={:?}",cred.project_id);
+            tracing::info!("cred-mail={:?}",cred.client_email);
+        }
+        Err(e) => {
+            let project_id = google_cloud_metadata::project_id().await;
+            tracing::info!("metadata-project-id{:?}", project_id);
+        }
+    }
+
     let project = google_cloud_auth::project().await.unwrap();
-    tracing::info!("{:?}", project.project_id());
+    tracing::info!("project={:?}", project.project_id());
 
     let client = Client::default().await.unwrap();
     let topic = client.topic("chat");

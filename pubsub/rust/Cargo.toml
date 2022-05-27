@@ -14,6 +14,7 @@ google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", b
 google-cloud-gax= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 google-cloud-auth= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
+google-cloud-metadata= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 warp = "0.3.1"
 tokio = { version = "1.14", features = ["full"] }
 env_logger = "0.8.1"
