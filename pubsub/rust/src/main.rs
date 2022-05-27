@@ -39,6 +39,9 @@ async fn main() {
         .with(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
 
+    let project = google_cloud_auth::project().await.unwrap();
+    tracing::info!("{:?}", project.project_id());
+
     let client = Client::default().await.unwrap();
     let topic = client.topic("chat");
     let uuid = uuid::Uuid::new_v4().to_string();
