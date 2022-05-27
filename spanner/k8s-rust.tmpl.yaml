@@ -50,7 +50,7 @@ metadata:
   labels:
     app: rust-api
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 3031
       targetPort: 3031

@@ -48,7 +48,7 @@ metadata:
   labels:
     app: rust-ws
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 8091
       targetPort: 8091

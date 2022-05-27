@@ -41,4 +41,9 @@ sed -e "s/<your_project>/${YOUR_PROJECT}/" k8s-rust.tmpl.yaml > k8s-rust.gen.yam
 kubectl apply -f k8s-rust.gen.yaml
 ```
 
-Then `kubectl get services` shows EXTERNAL-IP of locust-master.
+### Connect
+```
+export SERVICE_ENDPOINT=`kubectl describe services rust-ws | grep 'LoadBalancer Ingress' | awk '{print $3}'`
+wscat -c "ws://${SERVICE_ENDPOINT}:8091/Connect?channelId=012345678901234567890123456789abcdefg&userId=hogehoge2"
+wscat -c "ws://${SERVICE_ENDPOINT}:8091/Connect?channelId=012345678901234567890123456789abcdefg&userId=hogehoge1"
+```
