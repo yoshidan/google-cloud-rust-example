@@ -539,7 +539,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#72f0aca1b4f2d7832b04cd75b4d44717fafe3963"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d388a9d88fdfa90ba92d752faf7faaa0800c3991"
 dependencies = [
  "async-trait",
  "chrono",
@@ -557,7 +557,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.5.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#72f0aca1b4f2d7832b04cd75b4d44717fafe3963"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d388a9d88fdfa90ba92d752faf7faaa0800c3991"
 dependencies = [
  "google-cloud-auth",
  "http",
@@ -575,9 +575,9 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.4.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#72f0aca1b4f2d7832b04cd75b4d44717fafe3963"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d388a9d88fdfa90ba92d752faf7faaa0800c3991"
 dependencies = [
- "prost 0.10.3",
+ "prost 0.10.4",
  "prost-types 0.10.1",
  "tonic 0.7.2",
  "tonic-build",
@@ -586,11 +586,11 @@ dependencies = [
 [[package]]
 name = "google-cloud-longrunning"
 version = "0.4.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#72f0aca1b4f2d7832b04cd75b4d44717fafe3963"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d388a9d88fdfa90ba92d752faf7faaa0800c3991"
 dependencies = [
  "google-cloud-gax",
  "google-cloud-googleapis",
- "prost 0.10.3",
+ "prost 0.10.4",
  "prost-types 0.10.1",
  "tonic 0.7.2",
 ]
@@ -598,7 +598,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#72f0aca1b4f2d7832b04cd75b4d44717fafe3963"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d388a9d88fdfa90ba92d752faf7faaa0800c3991"
 dependencies = [
  "reqwest",
  "thiserror",
@@ -608,7 +608,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-pubsub"
 version = "0.2.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#72f0aca1b4f2d7832b04cd75b4d44717fafe3963"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d388a9d88fdfa90ba92d752faf7faaa0800c3991"
 dependencies = [
  "async-channel",
  "async-stream",
@@ -677,7 +677,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner"
 version = "0.7.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#72f0aca1b4f2d7832b04cd75b4d44717fafe3963"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d388a9d88fdfa90ba92d752faf7faaa0800c3991"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -688,7 +688,7 @@ dependencies = [
  "google-cloud-googleapis",
  "google-cloud-longrunning",
  "parking_lot 0.11.2",
- "prost 0.10.3",
+ "prost 0.10.4",
  "prost-types 0.10.1",
  "thiserror",
  "tokio",
@@ -1114,9 +1114,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.11.0"
+version = "1.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b10983b38c53aebdf33f542c6275b0f58a238129d00c4ae0e6fb59738d783ca"
+checksum = "7709cef83f0c1f58f666e746a08b21e0085f7440fa6a29cc194d68aac97a4225"
 
 [[package]]
 name = "opaque-debug"
@@ -1329,9 +1329,9 @@ checksum = "eb9f9e6e233e5c4a35559a617bf40a4ec447db2e84c20b55a6f83167b7e57872"
 
 [[package]]
 name = "prettyplease"
-version = "0.1.10"
+version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9e07e3a46d0771a8a06b5f4441527802830b43e679ba12f44960f48dd4c6803"
+checksum = "f28f53e8b192565862cf99343194579a022eb9c7dd3a8d03134734803c7b3125"
 dependencies = [
  "proc-macro2",
  "syn",
@@ -1358,9 +1358,9 @@ dependencies = [
 
 [[package]]
 name = "prost"
-version = "0.10.3"
+version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc03e116981ff7d8da8e5c220e374587b98d294af7ba7dd7fda761158f00086f"
+checksum = "71adf41db68aa0daaefc69bb30bcd68ded9b9abaad5d1fbb6304c4fb390e083e"
 dependencies = [
  "bytes",
  "prost-derive 0.10.1",
@@ -1368,9 +1368,9 @@ dependencies = [
 
 [[package]]
 name = "prost-build"
-version = "0.10.3"
+version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "65a1118354442de7feb8a2a76f3d80ef01426bd45542c8c1fdffca41a758f846"
+checksum = "8ae5a4388762d5815a9fc0dea33c56b021cdc8dde0c55e0c9ca57197254b0cab"
 dependencies = [
  "bytes",
  "cfg-if",
@@ -1381,7 +1381,7 @@ dependencies = [
  "log",
  "multimap",
  "petgraph",
- "prost 0.10.3",
+ "prost 0.10.4",
  "prost-types 0.10.1",
  "regex",
  "tempfile",
@@ -1431,7 +1431,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2d0a014229361011dc8e69c8a1ec6c2e8d0f2af7c91e3ea3f5b2170298461e68"
 dependencies = [
  "bytes",
- "prost 0.10.3",
+ "prost 0.10.4",
 ]
 
 [[package]]
@@ -2103,7 +2103,7 @@ dependencies = [
  "hyper-timeout",
  "percent-encoding",
  "pin-project",
- "prost 0.10.3",
+ "prost 0.10.4",
  "prost-derive 0.10.1",
  "rustls-pemfile",
  "tokio",
