@@ -44,7 +44,7 @@ impl User {
     }
 
     pub fn delete(&self) -> Mutation {
-        delete(TABLE_NAME, Key::key(&self.user_id))
+        delete(TABLE_NAME, Key::new(&self.user_id))
     }
 
     #[instrument(skip_all)]
