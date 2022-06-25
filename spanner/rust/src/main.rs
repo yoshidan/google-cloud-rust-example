@@ -26,9 +26,9 @@ async fn main() {
     let database = std::env::var("SPANNER_DSN").unwrap();
     let project_id = std::env::var("PROJECT_ID").unwrap();
 
-   // let (j,provider) = init::create_tracer_provider(project_id.as_str()).await;
+    let (j,provider) = init::create_tracer_provider(project_id.as_str()).await;
     tracing_subscriber::registry()
-   //     .with( tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing") ))
+        .with( tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing") ))
         .with(tracing_stackdriver::Stackdriver::new())
         .with(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();

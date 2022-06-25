@@ -77,7 +77,7 @@ pub async fn create_tracer_provider(project_id: &str) -> (JoinHandle<()>, Tracer
     }
     let provider = builder
         .with_config(Config {
-            sampler: Box::new(Sampler::TraceIdRatioBased(1.0)),
+            sampler: Box::new(Sampler::AlwaysOn),
             ..Default::default()
         })
         .build();
