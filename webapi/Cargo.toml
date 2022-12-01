@@ -23,6 +23,7 @@ rand = "0.8"
 uuid = { version="1.1.2", features=["v4"] }
 prost-types = "0.11"
 
+google-cloud-spanner-derive = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main"}
 google-cloud-spanner = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["trace", "rustls-tls"]}
 google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["trace", "rustls-tls"]}
 google-cloud-storage = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main", features=["trace", "rustls-tls"]}

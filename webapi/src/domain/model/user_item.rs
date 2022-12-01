@@ -14,6 +14,8 @@ use google_cloud_spanner::transaction::CallOptions;
 use google_cloud_spanner::value::CommitTimestamp;
 use std::convert::TryFrom;
 use tracing::instrument;
+use google_cloud_spanner_derive::Table;
+use crate::domain::model::read_by_statement;
 
 pub const TABLE_NAME: &str = "UserItem";
 pub const COLUMN_USER_ID: &str = "UserId";
@@ -21,6 +23,7 @@ pub const COLUMN_ITEM_ID: &str = "ItemId";
 pub const COLUMN_QUANTITY: &str = "Quantity";
 pub const COLUMN_UPDATED_AT: &str = "UpdatedAt";
 
+#[derive(Clone,Debug,Table)]
 pub struct UserItem {
     pub user_id: String,
     pub item_id: i64,
@@ -51,86 +54,25 @@ impl UserItem {
 
     #[instrument(skip_all)]
     pub async fn read_by_user_id(
-        tx: &mut Transaction, user_id: &String, options: Option<CallOptions>
+        tx: &mut Transaction, user_id: &str, options: Option<CallOptions>
     ) -> Result<Vec<Self>, RunInTxError> {
         let mut stmt = Statement::new("SELECT * From UserItem WHERE UserId = @UserId");
-        stmt.add_param(COLUMN_USER_ID, user_id);
-        Self::read_by_statement(tx, stmt, options).await
+        stmt.add_param(COLUMN_USER_ID, &user_id);
+        read_by_statement(tx, stmt, options).await
     }
 
     #[instrument(skip_all)]
     pub async fn find_by_pk(
-        tx: &mut Transaction, user_id: &String, item_id: &i64, options: Option<CallOptions>
+        tx: &mut Transaction, user_id: &str, item_id: &i64, options: Option<CallOptions>
     ) -> Result<Option<Self>, RunInTxError> {
         let mut stmt = Statement::new("SELECT * From UserItem WHERE UserId = @UserId AND ItemId = @ItemId");
-        stmt.add_param(COLUMN_USER_ID, user_id);
+        stmt.add_param(COLUMN_USER_ID, &user_id);
         stmt.add_param(COLUMN_ITEM_ID, item_id);
-        let mut rows = Self::read_by_statement(tx, stmt, options).await?;
+        let mut rows = read_by_statement(tx, stmt, options).await?;
         if !rows.is_empty() {
             Ok(rows.pop())
         } else {
             Ok(None)
         }
-    }
-
-    #[instrument(skip_all)]
-    pub async fn read_by_statement(
-        tx: &mut Transaction,
-        stmt: Statement,
-        options: Option<CallOptions>
-    ) -> Result<Vec<Self>, RunInTxError> {
-        let mut reader = tx.query(stmt).await?;
-        if options.is_some() {
-            reader.set_call_options(options.unwrap());
-        }
-        let mut result = vec![];
-        while let Some(row) = reader.next().await? {
-            let data = Self::try_from(row)?;
-            result.push(data)
-        }
-        Ok(result)
-    }
-}
-
-impl ToStruct for UserItem {
-    fn to_kinds(&self) -> Kinds {
-        vec![
-            (COLUMN_USER_ID, self.user_id.to_kind()),
-            (COLUMN_ITEM_ID, self.item_id.to_kind()),
-            (COLUMN_QUANTITY, self.quantity.to_kind()),
-            (COLUMN_UPDATED_AT, CommitTimestamp::new().to_kind()),
-        ]
-    }
-
-    fn get_types() -> Types {
-        vec![
-            (COLUMN_USER_ID, String::get_type()),
-            (COLUMN_ITEM_ID, i64::get_type()),
-            (COLUMN_QUANTITY, i64::get_type()),
-            (COLUMN_UPDATED_AT, CommitTimestamp::get_type()),
-        ]
-    }
-}
-
-impl TryFromStruct for UserItem {
-    fn try_from_struct(s: Struct<'_>) -> Result<Self, RowError> {
-        Ok(UserItem {
-            user_id: s.column_by_name(COLUMN_USER_ID)?,
-            item_id: s.column_by_name(COLUMN_ITEM_ID)?,
-            quantity: s.column_by_name(COLUMN_QUANTITY)?,
-            updated_at: s.column_by_name(COLUMN_UPDATED_AT)?,
-        })
-    }
-}
-
-impl TryFrom<Row> for UserItem {
-    type Error = RowError;
-    fn try_from(row: Row) -> Result<Self, RowError> {
-        Ok(UserItem {
-            user_id: row.column_by_name(COLUMN_USER_ID)?,
-            item_id: row.column_by_name(COLUMN_ITEM_ID)?,
-            quantity: row.column_by_name(COLUMN_QUANTITY)?,
-            updated_at: row.column_by_name(COLUMN_UPDATED_AT)?,
-        })
     }
 }

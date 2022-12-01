@@ -8,6 +8,9 @@ use tokio::select;
 use tokio::signal::unix::{signal, SignalKind};
 
 mod di;
+mod domain;
+mod lib;
+mod infrastructure;
 
 #[derive(Debug)]
 struct Config {

@@ -12,8 +12,10 @@ use google_cloud_spanner::statement::{Kinds, Statement, ToKind, ToStruct, Types}
 use google_cloud_spanner::transaction::Transaction;
 use google_cloud_spanner::transaction::CallOptions;
 use google_cloud_spanner::value::CommitTimestamp;
+use google_cloud_spanner_derive::Table;
 use std::convert::TryFrom;
 use tracing::instrument;
+use crate::domain::model::read_by_statement;
 
 pub const TABLE_NAME: &str = "User";
 pub const COLUMN_USER_ID: &str = "UserId";
@@ -54,7 +56,7 @@ impl User {
     ) -> Result<Option<Self>, RunInTxError> {
         let mut stmt = Statement::new("SELECT * From User WHERE UserId = @UserId");
         stmt.add_param(COLUMN_USER_ID, user_id);
-        let mut rows = Self::read_by_statement(tx, stmt, options).await?;
+        let mut rows = read_by_statement(tx, stmt, options).await?;
         if !rows.is_empty() {
             Ok(rows.pop())
         } else {
@@ -62,60 +64,4 @@ impl User {
         }
     }
 
-    #[instrument(skip_all)]
-    pub async fn read_by_statement(
-        tx: &mut Transaction,
-        stmt: Statement,
-        options: Option<CallOptions>
-    ) -> Result<Vec<Self>, RunInTxError> {
-        let mut reader = tx.query(stmt).await?;
-        if options.is_some() {
-            reader.set_call_options(options.unwrap());
-        }
-        let mut result = vec![];
-        while let Some(row) = reader.next().await? {
-            let data = Self::try_from(row)?;
-            result.push(data)
-        }
-        Ok(result)
-    }
-}
-
-impl ToStruct for User {
-    fn to_kinds(&self) -> Kinds {
-        vec![
-            (COLUMN_USER_ID, self.user_id.to_kind()),
-            (COLUMN_PREMIUM, self.premium.to_kind()),
-            (COLUMN_UPDATED_AT, CommitTimestamp::new().to_kind()),
-        ]
-    }
-
-    fn get_types() -> Types {
-        vec![
-            (COLUMN_USER_ID, String::get_type()),
-            (COLUMN_PREMIUM, bool::get_type()),
-            (COLUMN_UPDATED_AT, CommitTimestamp::get_type()),
-        ]
-    }
-}
-
-impl TryFromStruct for User {
-    fn try_from_struct(s: Struct<'_>) -> Result<Self, RowError> {
-        Ok(User {
-            user_id: s.column_by_name(COLUMN_USER_ID)?,
-            premium: s.column_by_name(COLUMN_PREMIUM)?,
-            updated_at: s.column_by_name(COLUMN_UPDATED_AT)?,
-        })
-    }
-}
-
-impl TryFrom<Row> for User {
-    type Error = RowError;
-    fn try_from(row: Row) -> Result<Self, RowError> {
-        Ok(User {
-            user_id: row.column_by_name(COLUMN_USER_ID)?,
-            premium: row.column_by_name(COLUMN_PREMIUM)?,
-            updated_at: row.column_by_name(COLUMN_UPDATED_AT)?,
-        })
-    }
 }

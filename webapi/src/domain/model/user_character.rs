@@ -14,6 +14,8 @@ use google_cloud_spanner::transaction::CallOptions;
 use google_cloud_spanner::value::CommitTimestamp;
 use std::convert::TryFrom;
 use tracing::instrument;
+use google_cloud_spanner_derive::Table;
+use crate::domain::model::read_by_statement;
 
 pub const TABLE_NAME: &str = "UserCharacter";
 pub const COLUMN_USER_ID: &str = "UserId";
@@ -22,6 +24,7 @@ pub const COLUMN_LEVEL: &str = "Level";
 pub const COLUMN_ACQUIRED_AT: &str = "AcquiredAt";
 pub const COLUMN_UPDATED_AT: &str = "UpdatedAt";
 
+#[derive(Clone,Debug,Table)]
 pub struct UserCharacter {
     pub user_id: String,
     pub character_id: i64,
@@ -53,21 +56,21 @@ impl UserCharacter {
 
     #[instrument(skip_all)]
     pub async fn read_by_user_id(
-        tx: &mut Transaction, user_id: &String, options: Option<CallOptions>
+        tx: &mut Transaction, user_id: &str, options: Option<CallOptions>
     ) -> Result<Vec<Self>, RunInTxError> {
         let mut stmt = Statement::new("SELECT * From UserCharacter WHERE UserId = @UserId");
-        stmt.add_param(COLUMN_USER_ID, user_id);
-        Self::read_by_statement(tx, stmt, options).await
+        stmt.add_param(COLUMN_USER_ID, &user_id);
+        read_by_statement(tx, stmt, options).await
     }
 
     #[instrument(skip_all)]
     pub async fn find_by_pk(
-        tx: &mut Transaction, user_id: &String, character_id: &i64, options: Option<CallOptions>
+        tx: &mut Transaction, user_id: &str, character_id: &i64, options: Option<CallOptions>
     ) -> Result<Option<Self>, RunInTxError> {
         let mut stmt = Statement::new("SELECT * From UserCharacter WHERE UserId = @UserId AND CharacterId = @CharacterId");
-        stmt.add_param(COLUMN_USER_ID, user_id);
+        stmt.add_param(COLUMN_USER_ID, &user_id);
         stmt.add_param(COLUMN_CHARACTER_ID, character_id);
-        let mut rows = Self::read_by_statement(tx, stmt, options).await?;
+        let mut rows = read_by_statement(tx, stmt, options).await?;
         if !rows.is_empty() {
             Ok(rows.pop())
         } else {
@@ -75,68 +78,4 @@ impl UserCharacter {
         }
     }
 
-    #[instrument(skip_all)]
-    pub async fn read_by_statement(
-        tx: &mut Transaction,
-        stmt: Statement,
-        options: Option<CallOptions>
-    ) -> Result<Vec<Self>, RunInTxError> {
-        let mut reader = tx.query(stmt).await?;
-        if options.is_some() {
-            reader.set_call_options(options.unwrap());
-        }
-        let mut result = vec![];
-        while let Some(row) = reader.next().await? {
-            let data = Self::try_from(row)?;
-            result.push(data)
-        }
-        Ok(result)
-    }
-}
-
-impl ToStruct for UserCharacter {
-    fn to_kinds(&self) -> Kinds {
-        vec![
-            (COLUMN_USER_ID, self.user_id.to_kind()),
-            (COLUMN_CHARACTER_ID, self.character_id.to_kind()),
-            (COLUMN_LEVEL, self.level.to_kind()),
-            (COLUMN_ACQUIRED_AT, self.acquired_at.to_kind()),
-            (COLUMN_UPDATED_AT, CommitTimestamp::new().to_kind()),
-        ]
-    }
-
-    fn get_types() -> Types {
-        vec![
-            (COLUMN_USER_ID, String::get_type()),
-            (COLUMN_CHARACTER_ID, i64::get_type()),
-            (COLUMN_LEVEL, i64::get_type()),
-            (COLUMN_ACQUIRED_AT, chrono::DateTime::<chrono::Utc>::get_type()),
-            (COLUMN_UPDATED_AT, CommitTimestamp::get_type()),
-        ]
-    }
-}
-
-impl TryFromStruct for UserCharacter {
-    fn try_from_struct(s: Struct<'_>) -> Result<Self, RowError> {
-        Ok(UserCharacter {
-            user_id: s.column_by_name(COLUMN_USER_ID)?,
-            character_id: s.column_by_name(COLUMN_CHARACTER_ID)?,
-            level: s.column_by_name(COLUMN_LEVEL)?,
-            acquired_at: s.column_by_name(COLUMN_ACQUIRED_AT)?,
-            updated_at: s.column_by_name(COLUMN_UPDATED_AT)?,
-        })
-    }
-}
-
-impl TryFrom<Row> for UserCharacter {
-    type Error = RowError;
-    fn try_from(row: Row) -> Result<Self, RowError> {
-        Ok(UserCharacter {
-            user_id: row.column_by_name(COLUMN_USER_ID)?,
-            character_id: row.column_by_name(COLUMN_CHARACTER_ID)?,
-            level: row.column_by_name(COLUMN_LEVEL)?,
-            acquired_at: row.column_by_name(COLUMN_ACQUIRED_AT)?,
-            updated_at: row.column_by_name(COLUMN_UPDATED_AT)?,
-        })
-    }
 }
