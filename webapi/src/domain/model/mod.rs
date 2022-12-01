@@ -12,10 +12,10 @@ use google_cloud_spanner::transaction::{CallOptions, Transaction};
 use tracing::instrument;
 
 #[instrument(skip_all)]
-async fn read_by_statement<T: TryFrom<Row, Error=row::Error>> (
+async fn read_by_statement<T: TryFrom<Row, Error = row::Error>>(
     tx: &mut Transaction,
     stmt: Statement,
-    options: Option<CallOptions>
+    options: Option<CallOptions>,
 ) -> Result<Vec<T>, RunInTxError> {
     let mut reader = tx.query(stmt).await?;
     if options.is_some() {

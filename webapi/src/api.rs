@@ -1,5 +1,5 @@
 use crate::InjectedApi;
-use actix_web::{get, post,  web, HttpResponse};
+use actix_web::{get, post, web, HttpResponse};
 use google_cloud_gax::cancel::CancellationToken;
 
 #[get("/api/user/{user_id}/inventory")]

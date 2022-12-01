@@ -1,9 +1,7 @@
-use std::sync::Arc;
 use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_spanner::client::{Client, RunInTxError};
-use google_cloud_spanner::transaction_rw::CommitOptions;
-use google_cloud_spanner::value::Timestamp;
-use uuid::uuid;
+use std::sync::Arc;
+
 use crate::domain::model::user::User;
 use crate::domain::model::user_character::UserCharacter;
 use crate::domain::model::user_item::UserItem;
@@ -17,7 +15,7 @@ pub struct UserUseCase {
     transactor: Client,
     user_repository: Arc<dyn UserRepository + 'static + Send + Sync>,
     user_item_repository: Arc<dyn UserItemRepository + 'static + Send + Sync>,
-    user_character_repository: Arc<dyn UserCharacterRepository + 'static + Send + Sync>
+    user_character_repository: Arc<dyn UserCharacterRepository + 'static + Send + Sync>,
 }
 
 impl UserUseCase {
@@ -25,49 +23,70 @@ impl UserUseCase {
         transactor: Client,
         user_repository: Arc<dyn UserRepository + 'static + Send + Sync>,
         user_item_repository: Arc<dyn UserItemRepository + 'static + Send + Sync>,
-        user_character_repository: Arc<dyn UserCharacterRepository + 'static + Send + Sync>
+        user_character_repository: Arc<dyn UserCharacterRepository + 'static + Send + Sync>,
     ) -> Self {
         Self {
             transactor,
             user_repository,
             user_item_repository,
-            user_character_repository
+            user_character_repository,
         }
     }
 
     #[tracing::instrument(skip_all)]
     pub async fn create_new_user(&self, ctx: CancellationToken) -> Result<String, anyhow::Error> {
-        let result: Result<(_, String), RunInTxError> = self.transactor.read_write_transaction(|tx, _| {
-            let mut context = Context::new(ctx.clone());
-            let user_repository = self.user_repository.clone();
-            let user_item_repository = self.user_item_repository.clone();
-            let user_character_repository = self.user_character_repository.clone();
-            Box::pin(async move {
-                let user_id = uuid::Uuid::new_v4().to_string();
+        let result: Result<(_, String), RunInTxError> = self
+            .transactor
+            .read_write_transaction(|tx, _| {
+                let mut context = Context::new(ctx.clone());
+                let user_repository = self.user_repository.clone();
+                let user_item_repository = self.user_item_repository.clone();
+                let user_character_repository = self.user_character_repository.clone();
+                Box::pin(async move {
+                    let user_id = uuid::Uuid::new_v4().to_string();
 
-                user_repository.insert(&mut context, Some(tx), &User {
-                    user_id: user_id.clone(),
-                    ..Default::default()
-                }).await?;
+                    user_repository
+                        .insert(
+                            &mut context,
+                            Some(tx),
+                            &User {
+                                user_id: user_id.clone(),
+                                ..Default::default()
+                            },
+                        )
+                        .await?;
 
-                user_item_repository.insert(&mut context, Some(tx), &UserItem {
-                    user_id: user_id.clone(),
-                    item_id: 1,
-                    quantity: 10,
-                    ..Default::default()
-                }).await?;
+                    user_item_repository
+                        .insert(
+                            &mut context,
+                            Some(tx),
+                            &UserItem {
+                                user_id: user_id.clone(),
+                                item_id: 1,
+                                quantity: 10,
+                                ..Default::default()
+                            },
+                        )
+                        .await?;
 
-                for i in 1..11 {
-                    user_character_repository.insert(&mut context, Some(tx), &UserCharacter {
-                        user_id: user_id.clone(),
-                        character_id: i,
-                        level: 1,
-                        ..Default::default()
-                    }).await?;
-                }
-                Ok(user_id)
+                    for i in 1..11 {
+                        user_character_repository
+                            .insert(
+                                &mut context,
+                                Some(tx),
+                                &UserCharacter {
+                                    user_id: user_id.clone(),
+                                    character_id: i,
+                                    level: 1,
+                                    ..Default::default()
+                                },
+                            )
+                            .await?;
+                    }
+                    Ok(user_id)
+                })
             })
-        }).await;
+            .await;
 
         Ok(result?.1)
     }

@@ -1,7 +1,7 @@
 use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_googleapis::spanner::v1::execute_sql_request::QueryMode;
 use google_cloud_spanner::client::ReadWriteTransactionOption;
-use google_cloud_spanner::transaction::{Transaction, CallOptions, QueryOptions};
+use google_cloud_spanner::transaction::{CallOptions, QueryOptions};
 use google_cloud_spanner::transaction_rw::CommitOptions;
 
 #[derive(Clone)]
@@ -11,9 +11,7 @@ pub struct Context {
 
 impl Context {
     pub fn new(cancel: CancellationToken) -> Self {
-        Self {
-            cancel,
-        }
+        Self { cancel }
     }
 }
 
@@ -46,7 +44,7 @@ impl From<&mut Context> for ReadWriteTransactionOption {
             commit_options: CommitOptions {
                 return_commit_stats: false,
                 call_options: ctx.into(),
-            }
+            },
         }
     }
 }
