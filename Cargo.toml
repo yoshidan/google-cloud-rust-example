@@ -1,5 +1,6 @@
 [workspace]
 members = [
-    "spanner/rust",
-    "pubsub/rust",
+    "lib",
+    "webapi",
+    "chat"
 ]

@@ -1,0 +1,32 @@
+[package]
+name = "google-cloud-example-chat"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+warp = "0.3.3"
+
+google-cloud-example-lib = { path = "../lib" }
+
+tracing = "0.1"
+tokio = { version="1.20", features=["rt-multi-thread", "signal"] }
+env_logger = "0.9"
+thiserror = { version="1.0", default-features= false }
+anyhow = { version="1.0", default-features= false }
+async-trait = "0.1"
+tonic = { version = "0.6", features = ["prost", "tls-webpki-roots"] }
+chrono = "0.4"
+rand = "0.8"
+uuid = { version="1.1.2", features=["v4"] }
+prost-types = "0.11"
+serde = "1.0"
+parking_lot = "0.12"
+futures-util = "0.3"
+
+google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["trace", "rustls-tls"]}
+google-cloud-storage = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main", features=["trace", "rustls-tls"]}
+google-cloud-gax = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main"}
+google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main"}
+google-cloud-auth= { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main", features=["rustls-tls"]}
