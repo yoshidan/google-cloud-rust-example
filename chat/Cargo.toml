@@ -1,13 +1,12 @@
 [package]
-name = "google-cloud-example-webapi"
+name = "google-cloud-example-chat"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4.1.0"
-actix-http = "3.2.2"
+warp = "0.3.3"
 
 google-cloud-example-lib = { path = "../lib" }
 
@@ -23,9 +22,9 @@ rand = "0.8"
 uuid = { version="1.1.2", features=["v4"] }
 prost-types = "0.11"
 serde = "1.0"
+parking_lot = "0.12"
+futures-util = "0.3"
 
-google-cloud-spanner-derive = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main"}
-google-cloud-spanner = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["trace", "rustls-tls"]}
 google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["trace", "rustls-tls"]}
 google-cloud-storage = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main", features=["trace", "rustls-tls"]}
 google-cloud-gax = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main"}

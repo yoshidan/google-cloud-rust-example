@@ -23,11 +23,7 @@ pub struct Connection {
 }
 
 impl Connection {
-    pub fn new(
-        channel_id: String,
-        user_id: String,
-        mut sender: SplitSink<WebSocket, warp::ws::Message>,
-    ) -> Self {
+    pub fn new(channel_id: String, user_id: String, mut sender: SplitSink<WebSocket, warp::ws::Message>) -> Self {
         tracing::info!("client connected channel={} user={}", channel_id, user_id);
         let (tx, mut rx) = mpsc::unbounded_channel();
 
@@ -58,8 +54,13 @@ impl Connection {
     }
 }
 
-#[tracing::instrument(skip(sender,rx))]
-async fn send(user_id: &str, channel_id: &str, sender: &mut SplitSink<WebSocket, warp::ws::Message>, rx: &mut UnboundedReceiver<Vec<u8>>) -> bool {
+#[tracing::instrument(skip(sender, rx))]
+async fn send(
+    user_id: &str,
+    channel_id: &str,
+    sender: &mut SplitSink<WebSocket, warp::ws::Message>,
+    rx: &mut UnboundedReceiver<Vec<u8>>,
+) -> bool {
     return match timeout(Duration::from_secs(10), rx.recv()).await {
         Ok(maybe_message) => {
             match maybe_message {
@@ -89,5 +90,5 @@ async fn send(user_id: &str, channel_id: &str, sender: &mut SplitSink<WebSocket,
             }
             true
         }
-    }
+    };
 }

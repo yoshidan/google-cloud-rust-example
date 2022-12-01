@@ -2,9 +2,10 @@ extern crate core;
 
 mod connection;
 
-use crate::connection::{Connection, CHANNEL_ID_KEY, PONG_FRAME, USER_ID_KEY, PING_FRAME};
+use crate::connection::{Connection, CHANNEL_ID_KEY, PING_FRAME, PONG_FRAME, USER_ID_KEY};
 use futures_util::stream::SplitSink;
 use futures_util::{SinkExt, StreamExt};
+use google_cloud_example_lib::trace::Tracer;
 use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_googleapis::pubsub::v1::PubsubMessage;
 use google_cloud_pubsub::client::{Client, ClientConfig};
@@ -13,16 +14,13 @@ use google_cloud_pubsub::subscription::{Subscription, SubscriptionConfig};
 use parking_lot::RwLock;
 use std::collections::HashMap;
 use std::convert::Infallible;
+use std::env::set_var;
 use std::io::Write;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::Duration;
-use opentelemetry::sdk::trace::Tracer;
-use tracing_subscriber::registry::ExtensionsMut;
 use tokio::signal::unix::{signal, SignalKind};
 use tokio::task::JoinHandle;
-use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::prelude::__tracing_subscriber_SubscriberExt;
 use warp::http::StatusCode;
 use warp::{Filter, Rejection, Reply};
 
@@ -34,13 +32,13 @@ struct InvalidParameter;
 impl warp::reject::Reject for InvalidParameter {}
 
 #[tokio::main]
-async fn main() -> Result<(), anyhow::Error>{
+async fn main() -> Result<(), anyhow::Error> {
+    // ---- dummy setting
+    set_var("PUBSUB_EMULATOR_HOST", "localhost:8681");
+    set_var("RUST_LOG", "info");
+    // ---- dummy setting
+
     let mut tracer = Tracer::default().await;
-    tracing_subscriber::registry()
-        .with(tracing_opentelemetry::layer().with_tracer(tracer.provider.tracer("tracing")))
-        .with(tracing_stackdriver::Stackdriver::new())
-        .with(tracing_subscriber::filter::EnvFilter::from_default_env())
-        .init();
 
     tracing::info!("Initializing server");
 
@@ -91,12 +89,11 @@ async fn main() -> Result<(), anyhow::Error>{
     let cancel = CancellationToken::new();
     let http_server = {
         let cancel = cancel.clone();
-        let (_, server) =
-            warp::serve(routes).bind_with_graceful_shutdown(([0, 0, 0, 0], 8091), async move {
-                tracing::info!("Listening on ws://0.0.0.0:8091");
-                cancel.cancelled().await;
-                tracing::info!("Shutdown server");
-            });
+        let (_, server) = warp::serve(routes).bind_with_graceful_shutdown(([0, 0, 0, 0], 8091), async move {
+            tracing::info!("Listening on ws://0.0.0.0:8091");
+            cancel.cancelled().await;
+            tracing::info!("Shutdown server");
+        });
 
         tokio::spawn(server)
     };
@@ -144,11 +141,7 @@ async fn main() -> Result<(), anyhow::Error>{
     Ok(())
 }
 
-fn start_subscribe(
-    cancel: CancellationToken,
-    subscription: Subscription,
-    cons: Clients,
-) -> JoinHandle<()> {
+fn start_subscribe(cancel: CancellationToken, subscription: Subscription, cons: Clients) -> JoinHandle<()> {
     //start subscriber
     let cancel = cancel.clone();
     tokio::spawn(async move {
@@ -185,13 +178,8 @@ fn start_subscribe(
     })
 }
 
-#[tracing::instrument(skip(cons,data))]
-fn on_subscribe(
-    user_id: &String,
-    channel_id: &String,
-    cons: Clients,
-    data: &[u8],
-) {
+#[tracing::instrument(skip(cons, data))]
+fn on_subscribe(user_id: &String, channel_id: &String, cons: Clients, data: &[u8]) {
     tracing::info!("subscribe message : size={}", data.len());
     if let Some(channel_users) = cons.read().get(channel_id) {
         for user in channel_users {
@@ -219,9 +207,6 @@ async fn handle_ws_client(
         Some(v) => v.to_string(),
         None => return Err(warp::reject::custom(InvalidParameter)),
     };
-    if channel_id.len() != 37 {
-        return Err(warp::reject::custom(InvalidParameter));
-    }
 
     Ok(ws.on_upgrade(|websocket| async move {
         // receiver - this server, from websocket client
@@ -257,7 +242,6 @@ async fn handle_ws_client(
             on_receive(user_id.clone(), channel_id.clone(), &publisher, data).await
         }
 
-
         // remove client
         let mut lock = cons.write();
         if let Some(v) = lock.get_mut(channel_id.as_str()) {
@@ -267,13 +251,8 @@ async fn handle_ws_client(
     }))
 }
 
-#[tracing::instrument(skip(publisher,data))]
-async fn on_receive(
-    user_id: String,
-    channel_id: String,
-    publisher: &Publisher,
-    data: Vec<u8>
-) {
+#[tracing::instrument(skip(publisher, data))]
+async fn on_receive(user_id: String, channel_id: String, publisher: &Publisher, data: Vec<u8>) {
     tracing::info!("receive message : size={}", data.len());
     let mut attributes = HashMap::<String, String>::new();
     attributes.insert(CHANNEL_ID_KEY.to_string(), channel_id);
@@ -292,10 +271,7 @@ async fn on_receive(
     }
 }
 
-
-async fn handle_rejection(
-    err: warp::reject::Rejection,
-) -> std::result::Result<impl warp::reply::Reply, Infallible> {
+async fn handle_rejection(err: warp::reject::Rejection) -> std::result::Result<impl warp::reply::Reply, Infallible> {
     let code;
     let message;
     if err.is_not_found() {
