@@ -1,5 +1,5 @@
 use google_cloud_auth::token_source::TokenSource;
-use google_cloud_auth::{create_token_source, Project};
+use google_cloud_auth::Project;
 use std::sync::Arc;
 
 use opentelemetry::runtime::Tokio;

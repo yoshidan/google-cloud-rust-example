@@ -1,28 +1,11 @@
+use crate::di::InjectedApi;
 use actix_web::{middleware, App, HttpServer};
 use anyhow::Context;
-use chrono::Timelike;
-use google_cloud_auth::Project;
-use google_cloud_gax::cancel::CancellationToken;
-use google_cloud_googleapis::pubsub::v1::PubsubMessage;
-use google_cloud_pubsub::client::ClientConfig;
-use google_cloud_pubsub::publisher::{Publisher, PublisherConfig};
-use google_cloud_pubsub::subscriber::ReceivedMessage;
-use google_cloud_spanner::client::RunInTxError;
-use google_cloud_spanner::key::Key;
-use google_cloud_spanner::reader::AsyncIterator;
-use std::time::Duration;
-use std::{env, time};
-use std::env::set_var;
-
-use google_cloud_spanner::value::Timestamp;
-use google_cloud_storage::sign::SignedURLOptions;
-
-use tokio::select;
-
-use tokio::signal::unix::{signal, SignalKind};
-
 use google_cloud_example_lib::trace::Tracer;
-use crate::di::InjectedApi;
+use google_cloud_gax::cancel::CancellationToken;
+use std::env::set_var;
+use tokio::select;
+use tokio::signal::unix::{signal, SignalKind};
 
 mod di;
 
@@ -54,7 +37,7 @@ async fn main() -> Result<(), anyhow::Error> {
     let spanner_client = google_cloud_spanner::client::Client::new(&config.spanner_dsn).await?;
 
     let dicon = actix_web::web::Data::new(InjectedApi::new(spanner_client.clone()));
-    let web_task = tokio::spawn(async move {
+    let _web_task = tokio::spawn(async move {
         let server = HttpServer::new(move || App::new().wrap(middleware::Logger::default()).app_data(dicon.clone()))
             .bind(("0.0.0.0", 8100))?
             .run();
