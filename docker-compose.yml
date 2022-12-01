@@ -29,7 +29,7 @@ services:
     links:
       - spanner
     volumes:
-      - ./ddl:/ddl
+      - ./webapi/ddl:/ddl
     environment:
       SPANNER_DATABASE_ID: local-database
       SPANNER_PROJECT_ID: local-project

@@ -16,13 +16,14 @@ use google_cloud_spanner_derive::Table;
 use std::convert::TryFrom;
 use tracing::instrument;
 use crate::domain::model::read_by_statement;
+use serde::Serialize;
 
 pub const TABLE_NAME: &str = "User";
 pub const COLUMN_USER_ID: &str = "UserId";
 pub const COLUMN_PREMIUM: &str = "Premium";
 pub const COLUMN_UPDATED_AT: &str = "UpdatedAt";
 
-#[derive(Clone,Debug,Table)]
+#[derive(Clone,Debug,Table, Default, Serialize)]
 pub struct User {
     pub user_id: String,
     pub premium: bool,

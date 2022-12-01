@@ -8,9 +8,11 @@ use tokio::select;
 use tokio::signal::unix::{signal, SignalKind};
 
 mod di;
+mod application;
 mod domain;
 mod lib;
 mod infrastructure;
+mod api;
 
 #[derive(Debug)]
 struct Config {
@@ -41,9 +43,15 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let dicon = actix_web::web::Data::new(InjectedApi::new(spanner_client.clone()));
     let _web_task = tokio::spawn(async move {
-        let server = HttpServer::new(move || App::new().wrap(middleware::Logger::default()).app_data(dicon.clone()))
-            .bind(("0.0.0.0", 8100))?
-            .run();
+        let server = HttpServer::new(move || {
+             App::new()
+                 .wrap(middleware::Logger::default())
+                 .app_data(dicon.clone())
+                 .service(api::create_new_user)
+                 .service(api::get_user_inventory)
+        })
+        .bind(("0.0.0.0", 8100))?
+        .run();
         tracing::info!("starting HTTP server at 0.0.0.0:8100");
 
         // Automatically shutdown gracefully.
