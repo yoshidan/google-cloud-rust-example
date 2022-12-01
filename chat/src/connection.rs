@@ -8,7 +8,6 @@ use tokio::task::JoinHandle;
 use tokio::time::timeout;
 use warp::ws::Message;
 use warp::ws::WebSocket;
-use warp::Error;
 
 pub const CHANNEL_ID_KEY: &str = "channelId";
 pub const USER_ID_KEY: &str = "userId";
@@ -61,7 +60,7 @@ async fn send(
     sender: &mut SplitSink<WebSocket, warp::ws::Message>,
     rx: &mut UnboundedReceiver<Vec<u8>>,
 ) -> bool {
-    return match timeout(Duration::from_secs(10), rx.recv()).await {
+    match timeout(Duration::from_secs(10), rx.recv()).await {
         Ok(maybe_message) => {
             match maybe_message {
                 Some(msg) => {
@@ -90,5 +89,5 @@ async fn send(
             }
             true
         }
-    };
+    }
 }

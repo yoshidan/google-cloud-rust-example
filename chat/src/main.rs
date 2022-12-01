@@ -3,12 +3,12 @@ extern crate core;
 mod connection;
 
 use crate::connection::{Connection, CHANNEL_ID_KEY, PING_FRAME, PONG_FRAME, USER_ID_KEY};
-use futures_util::stream::SplitSink;
+
 use futures_util::{SinkExt, StreamExt};
 use google_cloud_example_lib::trace::Tracer;
 use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_googleapis::pubsub::v1::PubsubMessage;
-use google_cloud_pubsub::client::{Client, ClientConfig};
+use google_cloud_pubsub::client::Client;
 use google_cloud_pubsub::publisher::Publisher;
 use google_cloud_pubsub::subscription::{Subscription, SubscriptionConfig};
 use parking_lot::RwLock;
@@ -16,7 +16,7 @@ use std::collections::HashMap;
 use std::convert::Infallible;
 use std::env::set_var;
 use std::io::Write;
-use std::net::SocketAddr;
+
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::signal::unix::{signal, SignalKind};
@@ -38,7 +38,7 @@ async fn main() -> Result<(), anyhow::Error> {
     set_var("RUST_LOG", "info");
     // ---- dummy setting
 
-    let mut tracer = Tracer::default().await;
+    let _tracer = Tracer::default().await;
 
     tracing::info!("Initializing server");
 
@@ -59,7 +59,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let cons: Clients = Arc::new(RwLock::new(HashMap::<String, Vec<Connection>>::new()));
     let cons_clone = cons.clone();
-    let health = warp::path("Health").map(|| format!("Server OK"));
+    let health = warp::path("Health").map(|| "Server OK".to_string());
     let operation = warp::path("Users")
         .and(warp::query())
         .and(warp::any().map(move || cons_clone.clone()))
@@ -133,7 +133,7 @@ async fn main() -> Result<(), anyhow::Error> {
     }
     let _ = http_server.await;
     let _ = subscriber.await;
-    let _ = topic_ping.abort();
+    topic_ping.abort();
     let _ = publisher.shutdown();
 
     tracing::info!("Shutdown complete.");
@@ -143,11 +143,11 @@ async fn main() -> Result<(), anyhow::Error> {
 
 fn start_subscribe(cancel: CancellationToken, subscription: Subscription, cons: Clients) -> JoinHandle<()> {
     //start subscriber
-    let cancel = cancel.clone();
+    let cancel = cancel;
     tokio::spawn(async move {
         let result = subscription
             .receive(
-                move |message, cancel| {
+                move |message, _cancel| {
                     let cons = cons.clone();
                     async move {
                         let data = message.message.data.as_slice();
@@ -155,7 +155,7 @@ fn start_subscribe(cancel: CancellationToken, subscription: Subscription, cons: 
                             tracing::info!("streaming ping message");
                             return;
                         }
-                        let result = message.ack().await;
+                        let _result = message.ack().await;
                         let channel_id = match message.message.attributes.get(CHANNEL_ID_KEY) {
                             Some(v) => v,
                             None => return,
@@ -211,7 +211,7 @@ async fn handle_ws_client(
     Ok(ws.on_upgrade(|websocket| async move {
         // receiver - this server, from websocket client
         // sender - diff clients connected to this server
-        let (mut sender, mut receiver) = websocket.split();
+        let (sender, mut receiver) = websocket.split();
         let channel_id = channel_id;
         let user_id = user_id;
         let con = Connection::new(channel_id, user_id, sender);
@@ -258,7 +258,7 @@ async fn on_receive(user_id: String, channel_id: String, publisher: &Publisher, 
     attributes.insert(CHANNEL_ID_KEY.to_string(), channel_id);
     attributes.insert(USER_ID_KEY.to_string(), user_id);
 
-    let mut msg = PubsubMessage {
+    let msg = PubsubMessage {
         data,
         attributes,
         message_id: "".to_string(),
@@ -277,13 +277,13 @@ async fn handle_rejection(err: warp::reject::Rejection) -> std::result::Result<i
     if err.is_not_found() {
         code = StatusCode::NOT_FOUND;
         message = "Not found";
-    } else if let Some(_) = err.find::<warp::filters::body::BodyDeserializeError>() {
+    } else if err.find::<warp::filters::body::BodyDeserializeError>().is_some() {
         code = StatusCode::BAD_REQUEST;
         message = "Invalid Body";
-    } else if let Some(_) = err.find::<warp::reject::MethodNotAllowed>() {
+    } else if err.find::<warp::reject::MethodNotAllowed>().is_some() {
         code = StatusCode::METHOD_NOT_ALLOWED;
         message = "Method not allowed";
-    } else if let Some(_) = err.find::<InvalidParameter>() {
+    } else if err.find::<InvalidParameter>().is_some() {
         code = StatusCode::BAD_REQUEST;
         message = "invalid parameter";
     } else {
