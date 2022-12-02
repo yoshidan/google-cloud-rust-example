@@ -1,6 +1,7 @@
 use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_spanner::client::{Client, RunInTxError};
 use std::sync::Arc;
+use google_cloud_spanner::value::SpannerNumeric;
 
 use crate::domain::model::user::User;
 use crate::domain::model::user_character::UserCharacter;

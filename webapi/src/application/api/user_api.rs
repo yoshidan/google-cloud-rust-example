@@ -25,7 +25,7 @@ impl UserApi {
     #[tracing::instrument(skip(self, ctx))]
     pub async fn get_inventory(&self, ctx: CancellationToken, user_id: &str) -> HttpResponse {
         match self.user_use_case.get_inventory(ctx, user_id).await {
-            Ok(result) => HttpResponse::Ok().json(format!("{:?}", result)),
+            Ok(result) => HttpResponse::Ok().json(result),
             Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),
         }
     }

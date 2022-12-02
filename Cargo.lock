@@ -873,7 +873,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-auth"
 version = "0.6.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ce5d50aabc19adc13fae758e74b3851581fa9211"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
 dependencies = [
  "async-trait",
  "base64",
@@ -965,7 +965,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-gax"
 version = "0.10.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ce5d50aabc19adc13fae758e74b3851581fa9211"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
 dependencies = [
  "google-cloud-auth",
  "http",
@@ -981,7 +981,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.6.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ce5d50aabc19adc13fae758e74b3851581fa9211"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
 dependencies = [
  "prost 0.11.3",
  "prost-types 0.11.2",
@@ -992,7 +992,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-longrunning"
 version = "0.9.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ce5d50aabc19adc13fae758e74b3851581fa9211"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
 dependencies = [
  "google-cloud-gax",
  "google-cloud-googleapis",
@@ -1003,7 +1003,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.3.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ce5d50aabc19adc13fae758e74b3851581fa9211"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
 dependencies = [
  "reqwest",
  "thiserror",
@@ -1013,7 +1013,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-pubsub"
 version = "0.10.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ce5d50aabc19adc13fae758e74b3851581fa9211"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
 dependencies = [
  "async-channel",
  "async-stream",
@@ -1029,8 +1029,8 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-spanner"
-version = "0.13.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ce5d50aabc19adc13fae758e74b3851581fa9211"
+version = "0.14.0"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1042,6 +1042,7 @@ dependencies = [
  "google-cloud-longrunning",
  "parking_lot",
  "prost-types 0.11.2",
+ "serde",
  "thiserror",
  "tokio",
  "tracing",
@@ -1050,7 +1051,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner-derive"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ce5d50aabc19adc13fae758e74b3851581fa9211"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
 dependencies = [
  "convert_case 0.6.0",
  "quote",
@@ -1060,7 +1061,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-storage"
 version = "0.6.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#ce5d50aabc19adc13fae758e74b3851581fa9211"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
 dependencies = [
  "async-stream",
  "base64",
@@ -2471,9 +2472,9 @@ checksum = "6bdef32e8150c2a081110b42772ffe7d7c9032b606bc226c8260fd97e0976601"
 
 [[package]]
 name = "syn"
-version = "1.0.104"
+version = "1.0.105"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ae548ec36cf198c0ef7710d3c230987c2d6d7bd98ad6edc0274462724c585ce"
+checksum = "60b9b43d45702de4c839cb9b51d9f529c5dd26a4aff255b42b1ebc03e88ee908"
 dependencies = [
  "proc-macro2",
  "quote",

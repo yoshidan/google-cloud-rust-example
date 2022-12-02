@@ -33,6 +33,7 @@ impl UserRepository for SpannerUserRepository {
         let sql = "
 SELECT
     UserId,
+    Value,
 	ARRAY(SELECT AS STRUCT * FROM UserItem WHERE UserId = @UserId) AS UserItems,
 	ARRAY(SELECT AS STRUCT * FROM UserCharacter WHERE UserId = @UserId) AS UserCharacters
 FROM User WHERE UserID = @UserID
