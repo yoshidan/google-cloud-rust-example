@@ -1,6 +1,7 @@
 CREATE TABLE User (
     UserId STRING(36) NOT NULL,
     Premium BOOL NOT NULL,
+    Value NUMERIC NOT NULL,
     UpdatedAt TIMESTAMP NOT NULL OPTIONS(allow_commit_timestamp=true)
 ) PRIMARY KEY(UserId);
 
