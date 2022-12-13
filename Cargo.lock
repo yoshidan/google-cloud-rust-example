@@ -595,9 +595,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "1.0.82"
+version = "1.0.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4a41a86530d0fe7f5d9ea779916b7cadd2d4f9add748b99c2c029cbbdfaf453"
+checksum = "bdf07d07d6531bfcdbe9b8b739b104610c6508dcc4d63b410585faf338241daf"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -607,9 +607,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "1.0.82"
+version = "1.0.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06416d667ff3e3ad2df1cd8cd8afae5da26cf9cec4d0825040f88b5ca659a2f0"
+checksum = "d2eb5b96ecdc99f72657332953d4d9c50135af1bac34277801cc3937906ebd39"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -622,15 +622,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "1.0.82"
+version = "1.0.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "820a9a2af1669deeef27cb271f476ffd196a2c4b6731336011e0ba63e2c7cf71"
+checksum = "ac040a39517fd1674e0f32177648334b0f4074625b5588a64519804ba0553b12"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "1.0.82"
+version = "1.0.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a08a6e2fcc370a089ad3b4aaf54db3b1b4cee38ddabce5896b33eb693275f470"
+checksum = "1362b0ddcfc4eb0a1f57b68bd77dd99f0e826958a96abd0ae9bd092e114ffed6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -872,12 +872,11 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-auth"
-version = "0.6.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
+version = "0.6.1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#559c9009411ef2bb7dc4a63f8f3bc93e1f303079"
 dependencies = [
  "async-trait",
  "base64",
- "chrono",
  "google-cloud-metadata",
  "home",
  "jsonwebtoken",
@@ -885,6 +884,7 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror",
+ "time 0.3.17",
  "tokio",
  "tracing",
  "urlencoding",
@@ -896,7 +896,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "chrono",
  "env_logger",
  "futures-util",
  "google-cloud-auth",
@@ -910,6 +909,7 @@ dependencies = [
  "rand",
  "serde",
  "thiserror",
+ "time 0.3.17",
  "tokio",
  "tonic 0.6.2",
  "tracing",
@@ -942,7 +942,6 @@ dependencies = [
  "actix-web",
  "anyhow",
  "async-trait",
- "chrono",
  "env_logger",
  "google-cloud-auth",
  "google-cloud-example-lib",
@@ -956,6 +955,7 @@ dependencies = [
  "rand",
  "serde",
  "thiserror",
+ "time 0.3.17",
  "tokio",
  "tonic 0.6.2",
  "tracing",
@@ -964,8 +964,8 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-gax"
-version = "0.10.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
+version = "0.10.1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#559c9009411ef2bb7dc4a63f8f3bc93e1f303079"
 dependencies = [
  "google-cloud-auth",
  "http",
@@ -981,7 +981,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-googleapis"
 version = "0.6.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#559c9009411ef2bb7dc4a63f8f3bc93e1f303079"
 dependencies = [
  "prost 0.11.3",
  "prost-types 0.11.2",
@@ -991,8 +991,8 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-longrunning"
-version = "0.9.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
+version = "0.9.1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#559c9009411ef2bb7dc4a63f8f3bc93e1f303079"
 dependencies = [
  "google-cloud-gax",
  "google-cloud-googleapis",
@@ -1003,7 +1003,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-metadata"
 version = "0.3.1"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#559c9009411ef2bb7dc4a63f8f3bc93e1f303079"
 dependencies = [
  "reqwest",
  "thiserror",
@@ -1012,15 +1012,14 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-pubsub"
-version = "0.10.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
+version = "0.10.1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#559c9009411ef2bb7dc4a63f8f3bc93e1f303079"
 dependencies = [
  "async-channel",
  "async-stream",
  "google-cloud-auth",
  "google-cloud-gax",
  "google-cloud-googleapis",
- "prost 0.10.4",
  "prost-types 0.11.2",
  "thiserror",
  "tokio",
@@ -1029,13 +1028,12 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-spanner"
-version = "0.14.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
+version = "0.14.1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#559c9009411ef2bb7dc4a63f8f3bc93e1f303079"
 dependencies = [
  "anyhow",
  "async-trait",
  "base64",
- "chrono",
  "google-cloud-auth",
  "google-cloud-gax",
  "google-cloud-googleapis",
@@ -1044,6 +1042,7 @@ dependencies = [
  "prost-types 0.11.2",
  "serde",
  "thiserror",
+ "time 0.3.17",
  "tokio",
  "tracing",
 ]
@@ -1051,7 +1050,7 @@ dependencies = [
 [[package]]
 name = "google-cloud-spanner-derive"
 version = "0.1.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#559c9009411ef2bb7dc4a63f8f3bc93e1f303079"
 dependencies = [
  "convert_case 0.6.0",
  "quote",
@@ -1060,13 +1059,12 @@ dependencies = [
 
 [[package]]
 name = "google-cloud-storage"
-version = "0.6.0"
-source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#d895687cb9b8c36af461199972752eceb99482cd"
+version = "0.6.1"
+source = "git+https://github.com/yoshidan/google-cloud-rust?branch=main#559c9009411ef2bb7dc4a63f8f3bc93e1f303079"
 dependencies = [
  "async-stream",
  "base64",
  "bytes",
- "chrono",
  "futures-util",
  "google-cloud-auth",
  "google-cloud-metadata",
@@ -1075,12 +1073,13 @@ dependencies = [
  "percent-encoding",
  "regex",
  "reqwest",
- "ring 0.17.0-alpha.11",
+ "ring",
  "rsa",
  "serde",
  "serde_json",
  "sha2",
  "thiserror",
+ "time 0.3.17",
  "tokio",
  "tokio-util 0.7.4",
  "tracing",
@@ -1239,9 +1238,9 @@ dependencies = [
 
 [[package]]
 name = "hyper-rustls"
-version = "0.23.1"
+version = "0.23.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59df7c4e19c950e6e0e868dcc0a300b09a9b88e9ec55bd879ca819087a77355d"
+checksum = "1788965e61b367cd03a62950836d5cd41560c3577d90e40e0819373194d1661c"
 dependencies = [
  "http",
  "hyper",
@@ -1330,9 +1329,9 @@ dependencies = [
 
 [[package]]
 name = "ipnet"
-version = "2.5.1"
+version = "2.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f88c5561171189e69df9d98bcf18fd5f9558300f7ea7b801eb8a0fd748bd8745"
+checksum = "11b0d96e660696543b251e58030cf9787df56da39dab19ad60eae7353040917e"
 
 [[package]]
 name = "itertools"
@@ -1369,13 +1368,13 @@ dependencies = [
 
 [[package]]
 name = "jsonwebtoken"
-version = "8.1.1"
+version = "8.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1aa4b4af834c6cfd35d8763d359661b90f2e45d8f750a0849156c7f4671af09c"
+checksum = "09f4f04699947111ec1733e71778d763555737579e44b85844cae8e1940a1828"
 dependencies = [
  "base64",
  "pem",
- "ring 0.16.20",
+ "ring",
  "serde",
  "serde_json",
  "simple_asn1",
@@ -1398,9 +1397,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.137"
+version = "0.2.138"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc7fcc620a3bff7cdd7a365be3376c97191aeaccc2a603e600951e452615bf89"
+checksum = "db6d7e329c562c5dfab7a46a2afabc8b987ab9a4834c9d1ca04dc54c1546cef8"
 
 [[package]]
 name = "libm"
@@ -1641,9 +1640,9 @@ checksum = "86f0b0d4bf799edbc74508c1e8bf170ff5f41238e5f8225603ca7caaae2b7860"
 
 [[package]]
 name = "openssl"
-version = "0.10.43"
+version = "0.10.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "020433887e44c27ff16365eaa2d380547a94544ad509aff6eb5b6e3e0b27b376"
+checksum = "29d971fd5722fec23977260f6e81aa67d2f22cadbdc2aa049f1022d9a3be1566"
 dependencies = [
  "bitflags",
  "cfg-if",
@@ -1673,9 +1672,9 @@ checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
 
 [[package]]
 name = "openssl-sys"
-version = "0.9.78"
+version = "0.9.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07d5c8cb6e57b3a3612064d7b18b117912b4ce70955c2504d4b741c9e244b132"
+checksum = "5454462c0eced1e97f2ec09036abc8da362e66802f66fd20f86854d9d8cbcbc4"
 dependencies = [
  "autocfg",
  "cc",
@@ -1754,9 +1753,9 @@ dependencies = [
 
 [[package]]
 name = "paste"
-version = "1.0.9"
+version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1de2e551fb905ac83f73f7aedf2f0cb4a0da7e35efa24a202a936269f1f18e1"
+checksum = "cf1c2c742266c2f1041c914ba65355a83ae8747b05f208319784083583494b4b"
 
 [[package]]
 name = "pem"
@@ -1889,16 +1888,6 @@ dependencies = [
 
 [[package]]
 name = "prost"
-version = "0.10.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71adf41db68aa0daaefc69bb30bcd68ded9b9abaad5d1fbb6304c4fb390e083e"
-dependencies = [
- "bytes",
- "prost-derive 0.10.1",
-]
-
-[[package]]
-name = "prost"
 version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c0b18e655c21ff5ac2084a5ad0611e827b3f92badf79f4910b5a5c58f4d87ff0"
@@ -1909,9 +1898,9 @@ dependencies = [
 
 [[package]]
 name = "prost-build"
-version = "0.11.3"
+version = "0.11.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e330bf1316db56b12c2bcfa399e8edddd4821965ea25ddb2c134b610b1c1c604"
+checksum = "276470f7f281b0ed53d2ae42dd52b4a8d08853a3c70e7fe95882acbb98a6ae94"
 dependencies = [
  "bytes",
  "heck",
@@ -1934,19 +1923,6 @@ name = "prost-derive"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f9cc1a3263e07e0bf68e96268f37665207b49560d98739662cdfaae215c720fe"
-dependencies = [
- "anyhow",
- "itertools",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "prost-derive"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b670f45da57fb8542ebdbb6105a925fe571b67f9e7ed9f47a06a84e72b4e7cc"
 dependencies = [
  "anyhow",
  "itertools",
@@ -2116,7 +2092,7 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "webpki-roots 0.22.5",
+ "webpki-roots 0.22.6",
  "winreg",
 ]
 
@@ -2125,21 +2101,6 @@ name = "ring"
 version = "0.16.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3053cf52e236a3ed746dfc745aa9cacf1b791d846bdaf412f60a8d7d6e17c8fc"
-dependencies = [
- "cc",
- "libc",
- "once_cell",
- "spin",
- "untrusted",
- "web-sys",
- "winapi",
-]
-
-[[package]]
-name = "ring"
-version = "0.17.0-alpha.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4575a179070909595bea5f999d67934737c2e0757a1eb9839af555917817b257"
 dependencies = [
  "cc",
  "libc",
@@ -2187,7 +2148,7 @@ checksum = "35edb675feee39aec9c99fa5ff985081995a06d594114ae14cbe797ad7b7a6d7"
 dependencies = [
  "base64",
  "log",
- "ring 0.16.20",
+ "ring",
  "sct 0.6.1",
  "webpki 0.21.4",
 ]
@@ -2199,7 +2160,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "539a2bfe908f471bfa933876bd1eb6a19cf2176d375f82ef7f99530a40e48c2c"
 dependencies = [
  "log",
- "ring 0.16.20",
+ "ring",
  "sct 0.7.0",
  "webpki 0.22.0",
 ]
@@ -2274,7 +2235,7 @@ version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b362b83898e0e69f38515b82ee15aa80636befe47c3b6d3d89a911e78fc228ce"
 dependencies = [
- "ring 0.16.20",
+ "ring",
  "untrusted",
 ]
 
@@ -2284,7 +2245,7 @@ version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d53dcdb7c9f8158937a7981b48accfd39a43af418591a5d008c7b22b5e1b7ca4"
 dependencies = [
- "ring 0.16.20",
+ "ring",
  "untrusted",
 ]
 
@@ -2319,18 +2280,18 @@ checksum = "e25dfac463d778e353db5be2449d1cce89bd6fd23c9f1ea21310ce6e5a1b29c4"
 
 [[package]]
 name = "serde"
-version = "1.0.148"
+version = "1.0.150"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e53f64bb4ba0191d6d0676e1b141ca55047d83b74f5607e6d8eb88126c52c2dc"
+checksum = "e326c9ec8042f1b5da33252c8a37e9ffbd2c9bef0155215b6e6c80c790e05f91"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.148"
+version = "1.0.150"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a55492425aa53521babf6137309e7d34c20bbfbbfcfe2c7f3a047fd1f6b92c0c"
+checksum = "42a3df25b0713732468deadad63ab9da1f1fd75a48a15024b50363f128db627e"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2594,9 +2555,9 @@ checksum = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
 
 [[package]]
 name = "tokio"
-version = "1.22.0"
+version = "1.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d76ce4a75fb488c605c54bf610f221cea8b0dafb53333c1a67e8ee199dcd2ae3"
+checksum = "eab6d665857cc6ca78d6e80303a02cea7a7851e85dfbd77cbdc09bd129f1ef46"
 dependencies = [
  "autocfg",
  "bytes",
@@ -2609,7 +2570,7 @@ dependencies = [
  "signal-hook-registry",
  "socket2",
  "tokio-macros",
- "winapi",
+ "windows-sys 0.42.0",
 ]
 
 [[package]]
@@ -2793,7 +2754,7 @@ dependencies = [
  "tower-service",
  "tracing",
  "tracing-futures",
- "webpki-roots 0.22.5",
+ "webpki-roots 0.22.6",
 ]
 
 [[package]]
@@ -2831,9 +2792,9 @@ dependencies = [
 
 [[package]]
 name = "tower-http"
-version = "0.3.4"
+version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c530c8675c1dbf98facee631536fa116b5fb6382d7dd6dc1b118d970eafe3ba"
+checksum = "f873044bf02dd1e8239e9c1293ea39dad76dc594ec16185d0a1bf31d8dc8d858"
 dependencies = [
  "bitflags",
  "bytes",
@@ -3015,9 +2976,9 @@ dependencies = [
 
 [[package]]
 name = "typenum"
-version = "1.15.0"
+version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dcf81ac59edc17cc8697ff311e8f5ef2d99fcbd9817b34cec66f90b6c3dfd987"
+checksum = "497961ef93d974e23eb6f433eb5fe1b7930b659f06d12dec6fc44a8f554c0bba"
 
 [[package]]
 name = "unicase"
@@ -3252,7 +3213,7 @@ version = "0.21.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8e38c0608262c46d4a56202ebabdeb094cef7e560ca7a226c6bf055188aa4ea"
 dependencies = [
- "ring 0.16.20",
+ "ring",
  "untrusted",
 ]
 
@@ -3262,7 +3223,7 @@ version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f095d78192e208183081cc07bc5515ef55216397af48b873e5edcd72637fa1bd"
 dependencies = [
- "ring 0.16.20",
+ "ring",
  "untrusted",
 ]
 
@@ -3277,9 +3238,9 @@ dependencies = [
 
 [[package]]
 name = "webpki-roots"
-version = "0.22.5"
+version = "0.22.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "368bfe657969fb01238bb756d351dcade285e0f6fcbd36dcb23359a5169975be"
+checksum = "b6c71e40d7d2c34a5106301fb632274ca37242cd0c9d3e64dbece371a40a2d87"
 dependencies = [
  "webpki 0.22.0",
 ]

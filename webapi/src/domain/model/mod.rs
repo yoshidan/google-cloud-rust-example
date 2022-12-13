@@ -9,6 +9,7 @@ use google_cloud_spanner::row;
 use google_cloud_spanner::row::Row;
 use google_cloud_spanner::statement::Statement;
 use google_cloud_spanner::transaction::{CallOptions, Transaction};
+use crate::domain::model::user::User;
 
 async fn read_by_statement<T: TryFrom<Row, Error = row::Error>>(
     tx: &mut Transaction,
@@ -25,3 +26,4 @@ async fn read_by_statement<T: TryFrom<Row, Error = row::Error>>(
     }
     Ok(result)
 }
+

@@ -22,12 +22,24 @@ pub const COLUMN_ITEM_ID: &str = "ItemId";
 pub const COLUMN_QUANTITY: &str = "Quantity";
 pub const COLUMN_UPDATED_AT: &str = "UpdatedAt";
 
-#[derive(Debug,Clone,Default,Table,serde::Serialize,serde::Deserialize)]
+#[derive(Debug,Clone,Table,serde::Serialize,serde::Deserialize)]
 pub struct UserItem {
     pub user_id: String,
     pub item_id: i64,
     pub quantity: i64,
-    pub updated_at: chrono::DateTime<chrono::Utc>,
+    #[serde(with = "time::serde::rfc3339")]
+    pub updated_at: time::OffsetDateTime,
+}
+
+impl Default for UserItem {
+    fn default() -> Self {
+        Self {
+            user_id: Default::default(),
+            item_id: Default::default(),
+            quantity: Default::default(),
+            updated_at: time::OffsetDateTime::now_utc(),
+        }
+    }
 }
 
 impl UserItem {

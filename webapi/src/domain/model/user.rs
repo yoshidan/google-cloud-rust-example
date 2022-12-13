@@ -22,12 +22,24 @@ pub const COLUMN_PREMIUM: &str = "Premium";
 pub const COLUMN_VALUE: &str = "Value";
 pub const COLUMN_UPDATED_AT: &str = "UpdatedAt";
 
-#[derive(Debug,Clone,Default,Table,serde::Serialize,serde::Deserialize)]
+#[derive(Debug,Clone,Table,serde::Serialize,serde::Deserialize)]
 pub struct User {
     pub user_id: String,
     pub premium: bool,
     pub value: google_cloud_spanner::value::SpannerNumeric,
-    pub updated_at: chrono::DateTime<chrono::Utc>,
+    #[serde(with = "time::serde::rfc3339")]
+    pub updated_at: time::OffsetDateTime,
+}
+
+impl Default for User {
+    fn default() -> Self {
+        Self {
+            user_id: Default::default(),
+            premium: Default::default(),
+            value: Default::default(),
+            updated_at: time::OffsetDateTime::now_utc(),
+        }
+    }
 }
 
 impl User {

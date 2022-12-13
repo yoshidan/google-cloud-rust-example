@@ -23,13 +23,27 @@ pub const COLUMN_LEVEL: &str = "Level";
 pub const COLUMN_ACQUIRED_AT: &str = "AcquiredAt";
 pub const COLUMN_UPDATED_AT: &str = "UpdatedAt";
 
-#[derive(Debug,Clone,Default,Table,serde::Serialize,serde::Deserialize)]
+#[derive(Debug,Clone,Table,serde::Serialize,serde::Deserialize)]
 pub struct UserCharacter {
     pub user_id: String,
     pub character_id: i64,
     pub level: i64,
-    pub acquired_at: chrono::DateTime<chrono::Utc>,
-    pub updated_at: chrono::DateTime<chrono::Utc>,
+    #[serde(with = "time::serde::rfc3339")]
+    pub acquired_at: time::OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    pub updated_at: time::OffsetDateTime,
+}
+
+impl Default for UserCharacter {
+    fn default() -> Self {
+        Self {
+            user_id: Default::default(),
+            character_id: Default::default(),
+            level: Default::default(),
+            acquired_at: time::OffsetDateTime::now_utc(),
+            updated_at: time::OffsetDateTime::now_utc(),
+        }
+    }
 }
 
 impl UserCharacter {
