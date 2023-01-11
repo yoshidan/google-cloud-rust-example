@@ -2,28 +2,3 @@
 pub mod user_item;
 pub mod user_character;
 pub mod user;
-
-use google_cloud_spanner::client::RunInTxError;
-use google_cloud_spanner::reader::AsyncIterator;
-use google_cloud_spanner::row;
-use google_cloud_spanner::row::Row;
-use google_cloud_spanner::statement::Statement;
-use google_cloud_spanner::transaction::{CallOptions, Transaction};
-use crate::domain::model::user::User;
-
-async fn read_by_statement<T: TryFrom<Row, Error = row::Error>>(
-    tx: &mut Transaction,
-    stmt: Statement,
-    options: Option<CallOptions>,
-) -> Result<Vec<T>, RunInTxError> {
-    let mut reader = tx.query(stmt).await?;
-    if options.is_some() {
-        reader.set_call_options(options.unwrap());
-    }
-    let mut result = vec![];
-    while let Some(row) = reader.next().await? {
-        result.push(row.try_into()?);
-    }
-    Ok(result)
-}
-
