@@ -6,7 +6,7 @@ use google_cloud_gax::grpc::{Code, Status};
 
 use crate::domain::model::user::User;
 use crate::lib::context::Context;
-use google_cloud_spanner::client::{Client, RunInTxError};
+use google_cloud_spanner::client::{Client, Error};
 use google_cloud_spanner::reader::AsyncIterator;
 use google_cloud_spanner::statement::Statement;
 use google_cloud_spanner::transaction::Transaction;
@@ -29,7 +29,7 @@ impl UserRepository for SpannerUserRepository {
         ctx: &mut Context,
         tx: Option<&mut Transaction>,
         user_id: &str,
-    ) -> Result<UserBundle, RunInTxError> {
+    ) -> Result<UserBundle, Error> {
         let sql = "
 SELECT
     UserId,
@@ -63,7 +63,7 @@ FROM User WHERE UserID = @UserID
         ctx: &mut Context,
         tx: Option<&mut ReadWriteTransaction>,
         target: &User,
-    ) -> Result<(), RunInTxError> {
+    ) -> Result<(), Error> {
         match tx {
             Some(tx) => tx.buffer_write(vec![target.insert()]),
             None => {

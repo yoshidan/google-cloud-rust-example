@@ -4,6 +4,9 @@ use anyhow::Context;
 use google_cloud_example_lib::trace::Tracer;
 use google_cloud_gax::cancel::CancellationToken;
 use std::env::set_var;
+use google_cloud_default::WithAuthExt;
+use google_cloud_gax::conn::Environment;
+use google_cloud_spanner::client::ClientConfig;
 use tokio::select;
 use tokio::signal::unix::{signal, SignalKind};
 
@@ -14,32 +17,19 @@ mod domain;
 mod infrastructure;
 mod lib;
 
-#[derive(Debug)]
-struct Config {
-    spanner_dsn: String,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            spanner_dsn: "projects/local-project/instances/test-instance/databases/local-database".to_string(),
-        }
-    }
-}
-
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     // ---- dummy setting
     set_var("SPANNER_EMULATOR_HOST", "localhost:9010");
     set_var("RUST_LOG", "info");
+    let database = "projects/local-project/instances/test-instance/databases/local-database";
     // ---- dummy setting
 
-    let config = Config::default();
-
-    let mut tracer = Tracer::default().await;
+    let config = ClientConfig::default().with_auth().await?;
+    let mut tracer = Tracer::new(None).await;
     tracing::info!("Initializing server");
     let cancel = CancellationToken::new();
-    let spanner_client = google_cloud_spanner::client::Client::new(&config.spanner_dsn).await?;
+    let spanner_client = google_cloud_spanner::client::Client::new(database, config).await?;
 
     let dicon = actix_web::web::Data::new(InjectedApi::new(spanner_client.clone()));
     let _web_task = tokio::spawn(async move {

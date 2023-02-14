@@ -16,5 +16,6 @@ tokio = { version="1.20", features=["rt-multi-thread", "signal"] }
 thiserror = { version="1.0", default-features= false }
 anyhow = { version="1.0", default-features= false }
 google-cloud-auth= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
+google-cloud-token= { git = "https://github.com/yoshidan/google-cloud-rust", branch = "main"}
 tonic = "0.6"
 async-trait = "0.1"

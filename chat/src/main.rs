@@ -8,7 +8,7 @@ use futures_util::{SinkExt, StreamExt};
 use google_cloud_example_lib::trace::Tracer;
 use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_googleapis::pubsub::v1::PubsubMessage;
-use google_cloud_pubsub::client::Client;
+use google_cloud_pubsub::client::{Client, ClientConfig};
 use google_cloud_pubsub::publisher::Publisher;
 use google_cloud_pubsub::subscription::{Subscription, SubscriptionConfig};
 use parking_lot::RwLock;
@@ -19,6 +19,8 @@ use std::io::Write;
 
 use std::sync::Arc;
 use std::time::Duration;
+use google_cloud_default::WithAuthExt;
+use google_cloud_gax::conn::Environment;
 use tokio::signal::unix::{signal, SignalKind};
 use tokio::task::JoinHandle;
 use warp::http::StatusCode;
@@ -38,11 +40,15 @@ async fn main() -> Result<(), anyhow::Error> {
     set_var("RUST_LOG", "info");
     // ---- dummy setting
 
-    let _tracer = Tracer::default().await;
+    let config = ClientConfig::default().with_auth().await?;
+    let _tracer = Tracer::new(match &config.environment {
+        Environment::Emulator(_) => None,
+        _ => config.project_id.clone(),
+    }).await;
 
+    let client = Client::new(config).await?;
     tracing::info!("Initializing server");
 
-    let client = Client::default().await?;
     let topic = client.topic("chat");
     let uuid = uuid::Uuid::new_v4().to_string();
     let subscription = client

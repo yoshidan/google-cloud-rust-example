@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use google_cloud_spanner::client::{Client, RunInTxError};
+use google_cloud_spanner::client::{Client, Error};
 
 use crate::domain::model::user_character::UserCharacter;
 use crate::domain::repository::user_character_repository::UserCharacterRepository;
@@ -26,7 +26,7 @@ impl UserCharacterRepository for SpannerUserCharacterRepository {
         tx: Option<&mut Transaction>,
         user_id: &str,
         item_id: i64,
-    ) -> Result<Option<UserCharacter>, RunInTxError> {
+    ) -> Result<Option<UserCharacter>, Error> {
         match tx {
             Some(tx) => UserCharacter::find_by_pk(tx, user_id, &item_id, Some(ctx.into())).await,
             None => {
@@ -41,7 +41,7 @@ impl UserCharacterRepository for SpannerUserCharacterRepository {
         ctx: &mut Context,
         tx: Option<&mut ReadWriteTransaction>,
         target: &UserCharacter,
-    ) -> Result<(), RunInTxError> {
+    ) -> Result<(), Error> {
         match tx {
             Some(tx) => tx.buffer_write(vec![target.insert()]),
             None => {

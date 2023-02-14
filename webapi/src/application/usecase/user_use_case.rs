@@ -1,5 +1,5 @@
 use google_cloud_gax::cancel::CancellationToken;
-use google_cloud_spanner::client::{Client, RunInTxError};
+use google_cloud_spanner::client::{Client, Error};
 use std::sync::Arc;
 
 use crate::domain::model::user::User;
@@ -35,7 +35,7 @@ impl UserUseCase {
 
     #[tracing::instrument(skip_all)]
     pub async fn create_new_user(&self, ctx: CancellationToken) -> Result<String, anyhow::Error> {
-        let result: Result<(_, String), RunInTxError> = self
+        let result: Result<(_, String), Error> = self
             .transactor
             .read_write_transaction(|tx, _| {
                 let mut context = Context::new(ctx.clone());

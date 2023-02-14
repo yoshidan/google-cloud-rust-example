@@ -1,17 +1,19 @@
-use google_cloud_auth::token_source::TokenSource;
-use google_cloud_auth::Project;
 use std::sync::Arc;
 
 use opentelemetry::runtime::Tokio;
-use opentelemetry::sdk::trace::{Config, Sampler, TracerProvider};
+use opentelemetry::sdk::trace::{Config, Builder, Sampler, TracerProvider};
 
-use opentelemetry_stackdriver::{Authorizer, Error, LogContext, MonitoredResource, StackDriverExporter};
+use opentelemetry_stackdriver::{
+    Authorizer, Error, LogContext, MonitoredResource, StackDriverExporter,
+};
 use tokio::task::JoinHandle;
 use tonic::metadata::MetadataValue;
 use tonic::Request;
 
 use async_trait::async_trait;
-use opentelemetry::sdk::trace;
+use google_cloud_auth::token::DefaultTokenSourceProvider;
+use google_cloud_token::{TokenSource, TokenSourceProvider};
+
 use tracing_subscriber::layer::SubscriberExt;
 
 use opentelemetry::trace::TracerProvider as _;
@@ -23,22 +25,19 @@ struct TraceAuthorizer {
 }
 
 impl TraceAuthorizer {
-    async fn new(project: Project) -> Self {
-        let ts = google_cloud_auth::create_token_source_from_project(
-            &project,
-            google_cloud_auth::Config {
-                audience: None,
-                scopes: Some(&[
-                    "https://www.googleapis.com/auth/trace.append",
-                    "https://www.googleapis.com/auth/logging.write",
-                ]),
-            },
-        )
-        .await
-        .unwrap();
+    async fn new(project_id: String) -> Self {
+        let ts = DefaultTokenSourceProvider::new(google_cloud_auth::project::Config{
+            audience: None,
+            scopes: Some(&[
+                "https://www.googleapis.com/auth/trace.append",
+                "https://www.googleapis.com/auth/logging.write",
+            ]),
+        })
+            .await
+            .unwrap();
         TraceAuthorizer {
-            project_id: project.project_id().unwrap().to_string(),
-            ts: Arc::from(ts),
+            project_id,
+            ts: ts.token_source(),
         }
     }
 }
@@ -51,16 +50,19 @@ impl Authorizer for TraceAuthorizer {
         self.project_id.as_str()
     }
 
-    async fn authorize<T: Send + Sync>(&self, req: &mut Request<T>, _scopes: &[&str]) -> Result<(), Self::Error> {
+    async fn authorize<T: Send + Sync>(
+        &self,
+        req: &mut Request<T>,
+        _scopes: &[&str],
+    ) -> Result<(), Self::Error> {
         let token = self
             .ts
             .token()
             .await
-            .map_err(|e| Error::Authorizer(e.into()))?
-            .access_token;
+            .map_err(|e| Error::Authorizer(e.into()))?;
         req.metadata_mut().insert(
             "authorization",
-            MetadataValue::from_str(&format!("Bearer {}", token.as_str())).unwrap(),
+            MetadataValue::from_str(token.as_str()).unwrap(),
         );
         Ok(())
     }
@@ -69,11 +71,10 @@ impl Authorizer for TraceAuthorizer {
 pub struct Tracer {
     j: Option<JoinHandle<()>>,
     pub provider: TracerProvider,
-    pub project: Option<Project>,
 }
 
 impl Tracer {
-    fn create_provider(builder: trace::Builder) -> TracerProvider {
+    fn create_provider(builder: Builder) -> TracerProvider {
         builder
             .with_config(Config {
                 sampler: Box::new(Sampler::AlwaysOn),
@@ -88,17 +89,16 @@ impl Tracer {
         }
     }
 
-    pub async fn default() -> Self {
-        let project = google_cloud_auth::project().await;
+    pub async fn new(project_id: Option<String>) -> Self {
         let mut builder = TracerProvider::builder();
-        let tracer = if let Ok(project) = project {
+        let tracer = if let Some(project_id) = project_id {
             let log_context = LogContext {
                 log_id: "cloud-trace-example".into(),
                 resource: MonitoredResource::Global {
-                    project_id: project.project_id().unwrap().to_string(),
+                    project_id: project_id.to_string(),
                 },
             };
-            let auth = TraceAuthorizer::new(project.clone()).await;
+            let auth = TraceAuthorizer::new(project_id).await;
             let (exporter, driver) = StackDriverExporter::builder()
                 .log_context(log_context)
                 .num_concurrent_requests(2)
@@ -110,13 +110,11 @@ impl Tracer {
             Self {
                 j: Some(j),
                 provider: Self::create_provider(builder),
-                project: Some(project),
             }
         } else {
             Self {
                 j: None,
                 provider: Self::create_provider(builder),
-                project: None,
             }
         };
 

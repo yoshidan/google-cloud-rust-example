@@ -3,7 +3,7 @@ use async_trait::async_trait;
 
 use crate::domain::model::user::User;
 use crate::lib::context::Context;
-use google_cloud_spanner::client::RunInTxError;
+use google_cloud_spanner::client::Error;
 use google_cloud_spanner::transaction::Transaction;
 use google_cloud_spanner::transaction_rw::ReadWriteTransaction;
 
@@ -14,11 +14,11 @@ pub trait UserRepository {
         ctx: &mut Context,
         tx: Option<&mut Transaction>,
         user_id: &str,
-    ) -> Result<UserBundle, RunInTxError>;
+    ) -> Result<UserBundle, Error>;
     async fn insert(
         &self,
         ctx: &mut Context,
         tx: Option<&mut ReadWriteTransaction>,
         target: &User,
-    ) -> Result<(), RunInTxError>;
+    ) -> Result<(), Error>;
 }

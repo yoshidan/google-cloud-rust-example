@@ -25,8 +25,8 @@ serde = "1.0"
 parking_lot = "0.12"
 futures-util = "0.3"
 
-google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["trace", "rustls-tls"]}
-google-cloud-storage = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main", features=["trace", "rustls-tls"]}
+google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["trace"]}
+google-cloud-storage = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main", features=["trace"]}
 google-cloud-gax = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main"}
 google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main"}
-google-cloud-auth= { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main", features=["rustls-tls"]}
+google-cloud-default = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["spanner", "storage", "pubsub", "rustls-tls"]}
