@@ -1,20 +1,18 @@
 use std::sync::Arc;
 
+use async_trait::async_trait;
+use google_cloud_auth::token::DefaultTokenSourceProvider;
+use google_cloud_token::{TokenSource, TokenSourceProvider};
 use opentelemetry::runtime::Tokio;
 use opentelemetry::sdk::trace::{Builder, Config, Sampler, TracerProvider};
-
+use opentelemetry::trace::TracerProvider as _;
 use opentelemetry_stackdriver::{Authorizer, Error, LogContext, MonitoredResource, StackDriverExporter};
 use tokio::task::JoinHandle;
 use tonic::metadata::MetadataValue;
 use tonic::Request;
-
-use async_trait::async_trait;
-use google_cloud_auth::token::DefaultTokenSourceProvider;
-use google_cloud_token::{TokenSource, TokenSourceProvider};
-
+use tracing_stackdriver::CloudTraceConfiguration;
+use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::layer::SubscriberExt;
-
-use opentelemetry::trace::TracerProvider as _;
 use tracing_subscriber::util::SubscriberInitExt;
 
 struct TraceAuthorizer {
@@ -56,62 +54,50 @@ impl Authorizer for TraceAuthorizer {
     }
 }
 
-pub struct Tracer {
-    j: Option<JoinHandle<()>>,
-    pub provider: TracerProvider,
+fn create_provider(builder: Builder) -> TracerProvider {
+    builder
+        .with_config(Config {
+            sampler: Box::new(Sampler::AlwaysOn),
+            ..Default::default()
+        })
+        .build()
 }
 
-impl Tracer {
-    fn create_provider(builder: Builder) -> TracerProvider {
-        builder
-            .with_config(Config {
-                sampler: Box::new(Sampler::AlwaysOn),
-                ..Default::default()
-            })
-            .build()
-    }
+pub async fn spawn(project_id: String) -> JoinHandle<()> {
+    let log_context = LogContext {
+        log_id: "cloud-trace-example".into(),
+        resource: MonitoredResource::Global {
+            project_id: project_id.to_string(),
+        },
+    };
+    let auth = TraceAuthorizer::new(project_id.to_string()).await;
+    let (exporter, driver) = StackDriverExporter::builder()
+        .log_context(log_context)
+        .num_concurrent_requests(2)
+        .build(auth)
+        .await
+        .unwrap();
 
-    pub async fn done(&mut self) {
-        if let Some(j) = &mut self.j {
-            let _ = j.await;
-        }
-    }
+    let provider = create_provider(TracerProvider::builder().with_batch_exporter(exporter, Tokio));
+    tracing_subscriber::registry()
+        .with(tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing")))
+        .with(tracing_stackdriver::layer().enable_cloud_trace(CloudTraceConfiguration { project_id }))
+        .with(
+            tracing_subscriber::filter::EnvFilter::builder()
+                .with_default_directive(LevelFilter::INFO.into())
+                .from_env_lossy(),
+        )
+        .init();
 
-    pub async fn new(project_id: Option<String>) -> Self {
-        let mut builder = TracerProvider::builder();
-        let tracer = if let Some(project_id) = project_id {
-            let log_context = LogContext {
-                log_id: "cloud-trace-example".into(),
-                resource: MonitoredResource::Global {
-                    project_id: project_id.to_string(),
-                },
-            };
-            let auth = TraceAuthorizer::new(project_id).await;
-            let (exporter, driver) = StackDriverExporter::builder()
-                .log_context(log_context)
-                .num_concurrent_requests(2)
-                .build(auth)
-                .await
-                .unwrap();
-            builder = builder.with_batch_exporter(exporter, Tokio);
-            let j = tokio::spawn(driver);
-            Self {
-                j: Some(j),
-                provider: Self::create_provider(builder),
-            }
-        } else {
-            Self {
-                j: None,
-                provider: Self::create_provider(builder),
-            }
-        };
+    return tokio::spawn(driver);
+}
 
-        tracing_subscriber::registry()
-            .with(tracing_opentelemetry::layer().with_tracer(tracer.provider.tracer("tracing")))
-            .with(tracing_stackdriver::Stackdriver::new())
-            .with(tracing_subscriber::filter::EnvFilter::from_default_env())
-            .init();
-
-        tracer
-    }
+pub fn start() {
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            tracing_subscriber::filter::EnvFilter::builder()
+                .with_default_directive(LevelFilter::INFO.into())
+                .from_env_lossy(),
+        )
+        .init();
 }

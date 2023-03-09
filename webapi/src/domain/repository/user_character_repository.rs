@@ -1,9 +1,9 @@
 use async_trait::async_trait;
-
-use crate::domain::model::user_character::UserCharacter;
 use google_cloud_spanner::client::Error;
 use google_cloud_spanner::transaction::Transaction;
 use google_cloud_spanner::transaction_rw::ReadWriteTransaction;
+
+use crate::domain::model::user_character::UserCharacter;
 
 #[async_trait]
 pub trait UserCharacterRepository {

@@ -1,10 +1,12 @@
+use std::sync::Arc;
+
+use google_cloud_spanner::client::Client as SpannerClient;
+
 use crate::application::api::user_api::UserApi;
 use crate::application::usecase::user_use_case::UserUseCase;
 use crate::infrastructure::repository::user_character_repository::SpannerUserCharacterRepository;
 use crate::infrastructure::repository::user_item_repository::SpannerUserItemRepository;
 use crate::infrastructure::repository::user_repository::SpannerUserRepository;
-use google_cloud_spanner::client::Client as SpannerClient;
-use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct InjectedApi {

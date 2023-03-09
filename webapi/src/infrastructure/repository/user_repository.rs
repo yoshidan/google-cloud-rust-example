@@ -1,15 +1,14 @@
-use crate::domain::modelx::user_bundle::UserBundle;
-use crate::domain::repository::user_repository::UserRepository;
 use async_trait::async_trait;
-
 use google_cloud_gax::grpc::{Code, Status};
-
-use crate::domain::model::user::User;
 use google_cloud_spanner::client::{Client, Error, ReadWriteTransactionOption};
 use google_cloud_spanner::reader::AsyncIterator;
 use google_cloud_spanner::statement::Statement;
 use google_cloud_spanner::transaction::{QueryOptions, Transaction};
 use google_cloud_spanner::transaction_rw::ReadWriteTransaction;
+
+use crate::domain::model::user::User;
+use crate::domain::modelx::user_bundle::UserBundle;
+use crate::domain::repository::user_repository::UserRepository;
 
 pub struct SpannerUserRepository {
     client: Client,

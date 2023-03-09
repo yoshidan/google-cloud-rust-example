@@ -1,8 +1,8 @@
-use crate::application::usecase::user_use_case::UserUseCase;
+use std::sync::Arc;
 
 use actix_web::HttpResponse;
 
-use std::sync::Arc;
+use crate::application::usecase::user_use_case::UserUseCase;
 
 pub struct UserApi {
     user_use_case: Arc<UserUseCase>,

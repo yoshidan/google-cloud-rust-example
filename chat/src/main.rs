@@ -1,30 +1,29 @@
 extern crate core;
 
-mod connection;
+use std::collections::HashMap;
+use std::convert::Infallible;
+use std::sync::Arc;
+use std::time::Duration;
 
-use crate::connection::{Connection, CHANNEL_ID_KEY, PING_FRAME, PONG_FRAME, USER_ID_KEY};
-
-use futures_util::{SinkExt, StreamExt};
-use google_cloud_example_lib::trace::Tracer;
+use futures_util::StreamExt;
+use google_cloud_default::WithAuthExt;
+use google_cloud_gax::conn::Environment;
 use google_cloud_googleapis::pubsub::v1::PubsubMessage;
 use google_cloud_pubsub::client::{Client, ClientConfig};
 use google_cloud_pubsub::publisher::Publisher;
 use google_cloud_pubsub::subscription::{Subscription, SubscriptionConfig};
 use parking_lot::RwLock;
-use std::collections::HashMap;
-use std::convert::Infallible;
-use std::env::set_var;
-use std::io::Write;
-
-use google_cloud_default::WithAuthExt;
-use google_cloud_gax::conn::Environment;
-use std::sync::Arc;
-use std::time::Duration;
 use tokio::signal::unix::{signal, SignalKind};
 use tokio::task::JoinHandle;
 use tokio_util::sync::CancellationToken;
 use warp::http::StatusCode;
 use warp::{Filter, Rejection, Reply};
+
+use google_cloud_example_lib::trace;
+
+use crate::connection::{Connection, CHANNEL_ID_KEY, PING_FRAME, PONG_FRAME, USER_ID_KEY};
+
+mod connection;
 
 type Clients = Arc<RwLock<HashMap<String, Vec<Connection>>>>;
 
@@ -35,17 +34,14 @@ impl warp::reject::Reject for InvalidParameter {}
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    // ---- dummy setting
-    set_var("PUBSUB_EMULATOR_HOST", "localhost:8681");
-    set_var("RUST_LOG", "info");
-    // ---- dummy setting
-
     let config = ClientConfig::default().with_auth().await?;
-    let _tracer = Tracer::new(match &config.environment {
-        Environment::Emulator(_) => None,
-        _ => config.project_id.clone(),
-    })
-    .await;
+    let _tracer = match &config.environment {
+        Environment::Emulator(_) => {
+            trace::start();
+            None
+        }
+        _ => Some(trace::spawn(config.project_id.clone().unwrap()).await),
+    };
 
     let client = Client::new(config).await?;
     tracing::info!("Initializing server");
@@ -140,7 +136,7 @@ async fn main() -> Result<(), anyhow::Error> {
     let _ = http_server.await;
     let _ = subscriber.await;
     topic_ping.abort();
-    let _ = publisher.shutdown();
+    publisher.shutdown().await;
 
     tracing::info!("Shutdown complete.");
 

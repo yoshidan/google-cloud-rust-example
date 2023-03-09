@@ -1,11 +1,10 @@
 use async_trait::async_trait;
-
 use google_cloud_spanner::client::{Client, Error, ReadWriteTransactionOption};
+use google_cloud_spanner::transaction::{CallOptions, Transaction};
+use google_cloud_spanner::transaction_rw::ReadWriteTransaction;
 
 use crate::domain::model::user_character::UserCharacter;
 use crate::domain::repository::user_character_repository::UserCharacterRepository;
-use google_cloud_spanner::transaction::{CallOptions, Transaction};
-use google_cloud_spanner::transaction_rw::ReadWriteTransaction;
 
 pub struct SpannerUserCharacterRepository {
     client: Client,

@@ -1,5 +1,6 @@
-use crate::InjectedApi;
 use actix_web::{get, post, web, HttpResponse};
+
+use crate::InjectedApi;
 
 #[get("/api/user/{user_id}/inventory")]
 pub async fn get_user_inventory(dicon: web::Data<InjectedApi>, user_id: web::Path<String>) -> HttpResponse {

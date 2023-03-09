@@ -1,6 +1,7 @@
+use std::time::Duration;
+
 use futures_util::stream::SplitSink;
 use futures_util::SinkExt;
-use std::time::Duration;
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::error::SendError;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};

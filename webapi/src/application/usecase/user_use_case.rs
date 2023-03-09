@@ -1,5 +1,6 @@
-use google_cloud_spanner::client::{Client, Error};
 use std::sync::Arc;
+
+use google_cloud_spanner::client::{Client, Error};
 
 use crate::domain::model::user::User;
 use crate::domain::model::user_character::UserCharacter;

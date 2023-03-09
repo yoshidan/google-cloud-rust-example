@@ -1,9 +1,9 @@
 use async_trait::async_trait;
-
-use crate::domain::model::user_item::UserItem;
 use google_cloud_spanner::client::Error;
 use google_cloud_spanner::transaction::Transaction;
 use google_cloud_spanner::transaction_rw::ReadWriteTransaction;
+
+use crate::domain::model::user_item::UserItem;
 
 #[async_trait]
 pub trait UserItemRepository {
