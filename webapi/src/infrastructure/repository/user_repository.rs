@@ -5,11 +5,10 @@ use async_trait::async_trait;
 use google_cloud_gax::grpc::{Code, Status};
 
 use crate::domain::model::user::User;
-use crate::lib::context::Context;
-use google_cloud_spanner::client::{Client, Error};
+use google_cloud_spanner::client::{Client, Error, ReadWriteTransactionOption};
 use google_cloud_spanner::reader::AsyncIterator;
 use google_cloud_spanner::statement::Statement;
-use google_cloud_spanner::transaction::Transaction;
+use google_cloud_spanner::transaction::{QueryOptions, Transaction};
 use google_cloud_spanner::transaction_rw::ReadWriteTransaction;
 
 pub struct SpannerUserRepository {
@@ -24,12 +23,7 @@ impl SpannerUserRepository {
 
 #[async_trait]
 impl UserRepository for SpannerUserRepository {
-    async fn find_by_pk(
-        &self,
-        ctx: &mut Context,
-        tx: Option<&mut Transaction>,
-        user_id: &str,
-    ) -> Result<UserBundle, Error> {
+    async fn find_by_pk(&self, tx: Option<&mut Transaction>, user_id: &str) -> Result<UserBundle, Error> {
         let sql = "
 SELECT
     UserId,
@@ -40,12 +34,17 @@ FROM User WHERE UserID = @UserID
         let mut statement = Statement::new(sql);
         statement.add_param("UserID", &user_id);
         let row = match tx {
-            Some(tx) => tx.query_with_option(statement, ctx.into()).await?.next().await?,
+            Some(tx) => {
+                tx.query_with_option(statement, QueryOptions::default())
+                    .await?
+                    .next()
+                    .await?
+            }
             None => {
                 self.client
                     .single()
                     .await?
-                    .query_with_option(statement, ctx.into())
+                    .query_with_option(statement, QueryOptions::default())
                     .await?
                     .next()
                     .await?
@@ -58,16 +57,14 @@ FROM User WHERE UserID = @UserID
         }
     }
 
-    async fn insert(
-        &self,
-        ctx: &mut Context,
-        tx: Option<&mut ReadWriteTransaction>,
-        target: &User,
-    ) -> Result<(), Error> {
+    async fn insert(&self, tx: Option<&mut ReadWriteTransaction>, target: &User) -> Result<(), Error> {
         match tx {
             Some(tx) => tx.buffer_write(vec![target.insert()]),
             None => {
-                let _ = self.client.apply_with_option(vec![target.insert()], ctx.into()).await?;
+                let _ = self
+                    .client
+                    .apply_with_option(vec![target.insert()], ReadWriteTransactionOption::default())
+                    .await?;
             }
         };
         Ok(())

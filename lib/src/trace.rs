@@ -1,11 +1,9 @@
 use std::sync::Arc;
 
 use opentelemetry::runtime::Tokio;
-use opentelemetry::sdk::trace::{Config, Builder, Sampler, TracerProvider};
+use opentelemetry::sdk::trace::{Builder, Config, Sampler, TracerProvider};
 
-use opentelemetry_stackdriver::{
-    Authorizer, Error, LogContext, MonitoredResource, StackDriverExporter,
-};
+use opentelemetry_stackdriver::{Authorizer, Error, LogContext, MonitoredResource, StackDriverExporter};
 use tokio::task::JoinHandle;
 use tonic::metadata::MetadataValue;
 use tonic::Request;
@@ -26,15 +24,15 @@ struct TraceAuthorizer {
 
 impl TraceAuthorizer {
     async fn new(project_id: String) -> Self {
-        let ts = DefaultTokenSourceProvider::new(google_cloud_auth::project::Config{
+        let ts = DefaultTokenSourceProvider::new(google_cloud_auth::project::Config {
             audience: None,
             scopes: Some(&[
                 "https://www.googleapis.com/auth/trace.append",
                 "https://www.googleapis.com/auth/logging.write",
             ]),
         })
-            .await
-            .unwrap();
+        .await
+        .unwrap();
         TraceAuthorizer {
             project_id,
             ts: ts.token_source(),
@@ -50,20 +48,10 @@ impl Authorizer for TraceAuthorizer {
         self.project_id.as_str()
     }
 
-    async fn authorize<T: Send + Sync>(
-        &self,
-        req: &mut Request<T>,
-        _scopes: &[&str],
-    ) -> Result<(), Self::Error> {
-        let token = self
-            .ts
-            .token()
-            .await
-            .map_err(|e| Error::Authorizer(e.into()))?;
-        req.metadata_mut().insert(
-            "authorization",
-            MetadataValue::from_str(token.as_str()).unwrap(),
-        );
+    async fn authorize<T: Send + Sync>(&self, req: &mut Request<T>, _scopes: &[&str]) -> Result<(), Self::Error> {
+        let token = self.ts.token().await.map_err(|e| Error::Authorizer(e.into()))?;
+        req.metadata_mut()
+            .insert("authorization", MetadataValue::from_str(token.as_str()).unwrap());
         Ok(())
     }
 }

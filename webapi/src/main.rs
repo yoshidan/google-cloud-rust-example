@@ -1,21 +1,20 @@
 use crate::di::InjectedApi;
 use actix_web::{middleware, App, HttpServer};
 use anyhow::Context;
-use google_cloud_example_lib::trace::Tracer;
-use google_cloud_gax::cancel::CancellationToken;
-use std::env::set_var;
 use google_cloud_default::WithAuthExt;
+use google_cloud_example_lib::trace::Tracer;
 use google_cloud_gax::conn::Environment;
 use google_cloud_spanner::client::ClientConfig;
+use std::env::set_var;
 use tokio::select;
 use tokio::signal::unix::{signal, SignalKind};
+use tokio_util::sync::CancellationToken;
 
 mod api;
 mod application;
 mod di;
 mod domain;
 mod infrastructure;
-mod lib;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {

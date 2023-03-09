@@ -1,4 +1,3 @@
-use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_spanner::client::{Client, Error};
 use std::sync::Arc;
 
@@ -9,7 +8,6 @@ use crate::domain::modelx::user_bundle::UserBundle;
 use crate::domain::repository::user_character_repository::UserCharacterRepository;
 use crate::domain::repository::user_item_repository::UserItemRepository;
 use crate::domain::repository::user_repository::UserRepository;
-use crate::lib::context::Context;
 
 pub struct UserUseCase {
     transactor: Client,
@@ -34,11 +32,10 @@ impl UserUseCase {
     }
 
     #[tracing::instrument(skip_all)]
-    pub async fn create_new_user(&self, ctx: CancellationToken) -> Result<String, anyhow::Error> {
+    pub async fn create_new_user(&self) -> Result<String, anyhow::Error> {
         let result: Result<(_, String), Error> = self
             .transactor
-            .read_write_transaction(|tx, _| {
-                let mut context = Context::new(ctx.clone());
+            .read_write_transaction(|tx| {
                 let user_repository = self.user_repository.clone();
                 let user_item_repository = self.user_item_repository.clone();
                 let user_character_repository = self.user_character_repository.clone();
@@ -47,7 +44,6 @@ impl UserUseCase {
 
                     user_repository
                         .insert(
-                            &mut context,
                             Some(tx),
                             &User {
                                 user_id: user_id.clone(),
@@ -58,7 +54,6 @@ impl UserUseCase {
 
                     user_item_repository
                         .insert(
-                            &mut context,
                             Some(tx),
                             &UserItem {
                                 user_id: user_id.clone(),
@@ -72,7 +67,6 @@ impl UserUseCase {
                     for i in 1..11 {
                         user_character_repository
                             .insert(
-                                &mut context,
                                 Some(tx),
                                 &UserCharacter {
                                     user_id: user_id.clone(),
@@ -91,10 +85,9 @@ impl UserUseCase {
         Ok(result?.1)
     }
 
-    #[tracing::instrument(skip(self, ctx))]
-    pub async fn get_inventory(&self, ctx: CancellationToken, user_id: &str) -> Result<UserBundle, anyhow::Error> {
-        let context = &mut Context::new(ctx.clone());
-        let user_bundle = self.user_repository.find_by_pk(context, None, user_id).await?;
+    #[tracing::instrument(skip(self))]
+    pub async fn get_inventory(&self, user_id: &str) -> Result<UserBundle, anyhow::Error> {
+        let user_bundle = self.user_repository.find_by_pk(None, user_id).await?;
         Ok(user_bundle)
     }
 }

@@ -6,7 +6,6 @@ use crate::connection::{Connection, CHANNEL_ID_KEY, PING_FRAME, PONG_FRAME, USER
 
 use futures_util::{SinkExt, StreamExt};
 use google_cloud_example_lib::trace::Tracer;
-use google_cloud_gax::cancel::CancellationToken;
 use google_cloud_googleapis::pubsub::v1::PubsubMessage;
 use google_cloud_pubsub::client::{Client, ClientConfig};
 use google_cloud_pubsub::publisher::Publisher;
@@ -17,12 +16,13 @@ use std::convert::Infallible;
 use std::env::set_var;
 use std::io::Write;
 
-use std::sync::Arc;
-use std::time::Duration;
 use google_cloud_default::WithAuthExt;
 use google_cloud_gax::conn::Environment;
+use std::sync::Arc;
+use std::time::Duration;
 use tokio::signal::unix::{signal, SignalKind};
 use tokio::task::JoinHandle;
+use tokio_util::sync::CancellationToken;
 use warp::http::StatusCode;
 use warp::{Filter, Rejection, Reply};
 
@@ -44,7 +44,8 @@ async fn main() -> Result<(), anyhow::Error> {
     let _tracer = Tracer::new(match &config.environment {
         Environment::Emulator(_) => None,
         _ => config.project_id.clone(),
-    }).await;
+    })
+    .await;
 
     let client = Client::new(config).await?;
     tracing::info!("Initializing server");
@@ -56,7 +57,6 @@ async fn main() -> Result<(), anyhow::Error> {
             &format!("ts-{}", uuid),
             topic.id().as_str(),
             SubscriptionConfig::default(),
-            None,
             None,
         )
         .await
@@ -119,7 +119,7 @@ async fn main() -> Result<(), anyhow::Error> {
                         message_id: "".to_string(),
                         publish_time: None,
                         ordering_key: "".to_string()
-                    }).await.get(Some(cancel_clone.clone())).await;
+                    }).await.get().await;
                     if result.is_err() {
                         tracing::error!("streaming ping error {}", result.err().unwrap());
                     }
@@ -180,7 +180,7 @@ fn start_subscribe(cancel: CancellationToken, subscription: Subscription, cons: 
         if let Err(err) = result {
             tracing::error!("receive error {}", err);
         };
-        let _ = subscription.delete(None, None).await;
+        let _ = subscription.delete(None).await;
     })
 }
 
@@ -271,7 +271,7 @@ async fn on_receive(user_id: String, channel_id: String, publisher: &Publisher, 
         publish_time: None,
         ordering_key: "".to_string(),
     };
-    let result = publisher.publish(msg).await.get(None).await;
+    let result = publisher.publish(msg).await.get().await;
     if result.is_err() {
         tracing::error!("error publish message: {}", result.unwrap_err());
     }
