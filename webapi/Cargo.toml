@@ -11,24 +11,24 @@ actix-http = "3.2.2"
 
 google-cloud-example-lib = { path = "../lib" }
 
-tracing = "0.1"
-tokio = { version="1.20", features=["rt-multi-thread", "signal"] }
-env_logger = "0.9"
-thiserror = { version="1.0", default-features= false }
-anyhow = { version="1.0", default-features= false }
-async-trait = "0.1"
-tonic = { version = "0.6", features = ["prost", "tls-webpki-roots"] }
-time = { version="0.3", features = ["serde"] }
-rand = "0.8"
-uuid = { version="1.1.2", features=["v4"] }
-prost-types = "0.11"
-serde = "1.0"
-serde_json = "1.0"
+tracing.workspace = true
+tokio.workspace = true
+env_logger.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+async-trait.workspace = true
+tonic.workspace = true
+time.workspace = true
+rand.workspace = true
+uuid.workspace = true
+prost-types.workspace = true
+serde.workspace = true
+serde_json.workspace = true
 
-google-cloud-spanner-derive = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main"}
-google-cloud-spanner = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["trace"]}
-google-cloud-pubsub = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["trace"]}
-google-cloud-storage = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main", features=["trace"]}
-google-cloud-gax = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main"}
-google-cloud-googleapis= { git = "https://github.com/yoshidan/google-cloud-rust", branch="main"}
-google-cloud-default = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=["spanner", "storage", "pubsub", "rustls-tls"]}
+google-cloud-spanner-derive.workspace = true
+google-cloud-spanner.workspace = true
+google-cloud-pubsub.workspace = true
+google-cloud-storage.workspace = true
+google-cloud-gax.workspace = true
+google-cloud-googleapis.workspace = true
+google-cloud-default.workspace = true
